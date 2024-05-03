@@ -3544,21 +3544,16 @@ void TRead::read(OrganRegistration* r, XmlReader& xml, ReadContext& ctx)
     while (xml.readNextStartElement()) {
         const AsciiStringView tag = xml.name();
         if (tag == "isRegistration") {
-            // r->setIsRegistration(xml.readBool());
-            int a = 0;
+            ;
         } else if (tag == "registrationState") {
             while (xml.readNextStartElement()) {
                 const AsciiStringView stringTag = xml.name();
                 if (stringTag == "string") {
-                    // OrganStringType str = OrganStringType(xml.intAttribute("name"));
-                    // RegistrationPosition pos = RegistrationPosition(xml.readInt());
-                    // r->setRegistration(str, pos);
-                    int b = 0;
+                    ;
                 } else {
                     xml.unknown();
                 }
             }
-            // r->setPlayableTpcs();
         } else if (!readProperties(r, xml, ctx)) {
             xml.unknown();
         }

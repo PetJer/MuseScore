@@ -23,27 +23,31 @@
 #ifndef MU_ENGRAVING_ORGANREGISTRATION_H
 #define MU_ENGRAVING_ORGANREGISTRATION_H
 
-// #include "pitchspelling.h"
 #include "textbase.h"
 
 using namespace mu;
 
 namespace mu::engraving {
-// enum class OrganPosition : char {
-//     FLAT,
-//     NATURAL,
-//     SHARP,
+enum class ManualPedal : char {
+    VI,
+    V,
+    IV,
+    III,
+    II,
+    I,
+    PED
+};
 
-    //     UNSET                   // Only used in setDiagramText to represent the beginning of a score
-    // };
+enum class NamingConvention : char {
+    NUMBER,
+    ENGLISH,
+    GERMAN,
+    FRENCH
+};
 
-    // // Use for indexes of _organState
-    // enum OrganStringType : char {
-    //     H, I, J, K, L, M, N
-    // };
-
-    // Not logical but cool for now
-    static constexpr int REGISTER_NO = 3;
+static constexpr int MANUALS_NO = 6;
+// Will be a setting. Leaving it here for now
+static const String SEPARATOR = u", ";
 
 class OrganRegistration final : public TextBase
 {
@@ -67,27 +71,31 @@ public:
     String accessibleInfo() const override;
     String screenReaderInfo() const override;
 
-    void setOrganRegistration(); // organregistration.cpp
+    std::map<ManualPedal, StringList> getOrganDisposition() const { return m_organDisposition; }
+    std::vector<std::pair<ManualPedal, ManualPedal>> getOrganCouplers() const { return m_organCouplers; }
+    StringList getOrganPistons() const { return m_organPistons; }
 
-    // std::array<OrganPosition, ORGAN_STRING_NO> getOrganState() const { return m_organState; } // organregistration.cpp
-    // void setOrganState(OrganPosition, ORGAN_STRING_NO> state); // organregistration.cpp
-    std::array<String, REGISTER_NO> getRegistrationState() const { return m_registrationState; }
-    void setRegistrationState(std::array<String, REGISTER_NO> state);
+    std::map<ManualPedal, StringList> getStops() const { return m_stops; }
+    std::vector<std::pair<ManualPedal, ManualPedal>> getCouplers() const { return m_couplers; }
+    StringList getPistons() const { return m_pistons; }
+    String getContext() const { return m_context; }
 
-    // void setOrgan(OrganStringType harpString, OrganPosition organ); // organregistration.cpp
-    void setRegistration(int idx, String registration); // organregistration.cpp
-
-    String createRegistrationText(); // organregistration.cpp
-    void updateRegistrationText(); // for now - tlayout.cpp and singlelayout.cpp
-
-    // void undoChangeOrganState(std::array<OrganPosition, ORGAN_STRING_NO> _organState); // organregistration.cpp
-    void undoChangeRegistrationState(std::array<String, REGISTER_NO> _registrationState);
+    String createRegistrationText();
+    void updateRegistrationText();
 
 private:
-    // std::array<OrganPosition, ORGAN_STRING_NO> m_organState; // organregistration.cpp
-    std::array<String, REGISTER_NO> m_registrationState;
+    // Organ
+    String m_organName;
+    std::map<ManualPedal, StringList> m_organDisposition;
+    std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
+    StringList m_organPistons;
+
+    // Registration
+    std::map<ManualPedal, StringList> m_stops;
+    std::vector<std::pair<ManualPedal, ManualPedal>> m_couplers;
+    StringList m_pistons;
+    String m_context;
 };
 } // namespace mu::engraving
-
 
 #endif // MU_ENGRAVING_ORGANREGISTRATION_H

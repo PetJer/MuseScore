@@ -2290,9 +2290,9 @@ void TWrite::write(const OrganRegistration* item, XmlWriter& xml, WriteContext& 
 
     // Write vector of organ strings.  Order is always D, C, B, E, F, G, A
     xml.startElement("registrationState");
-    for (size_t idx = 0; idx < item->getRegistrationState().size(); idx++) {
-        // xml.tag("string", { { "name", idx } }, static_cast<int>(item->getRegistrationState().at(idx)));
-    }
+    // for (size_t idx = 0; idx < item->getRegistrationState().size(); idx++) {
+    //     // xml.tag("string", { { "name", idx } }, static_cast<int>(item->getRegistrationState().at(idx)));
+    // }
     xml.endElement();
 
     writeProperties(static_cast<const TextBase*>(item), xml, ctx, true);
