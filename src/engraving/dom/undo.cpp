@@ -74,6 +74,7 @@
 #include "textedit.h"
 #include "textline.h"
 #include "tie.h"
+#include "organregistration.h"
 
 #include "tremolobar.h"
 #include "tuplet.h"
@@ -3195,6 +3196,15 @@ std::vector<const EngravingObject*> ChangeSingleHarpPedal::objectItems() const
     }
     return objs;
 }
+
+//---------------------------------------------------------
+//   OrganRegistration
+//---------------------------------------------------------
+
+/*
+ * TODO options
+*/
+
 }
 
 void ChangeStringData::flip(EditData*)

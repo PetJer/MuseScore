@@ -99,6 +99,7 @@
 #include "dom/note.h"
 #include "dom/notedot.h"
 
+#include "dom/organregistration.h"
 #include "dom/ornament.h"
 #include "dom/ottava.h"
 
@@ -332,6 +333,9 @@ void TLayout::layoutItem(EngravingItem* item, LayoutContext& ctx)
         break;
     case ElementType::NOTEHEAD:
         layoutSymbol(item_cast<const NoteHead*>(item), static_cast<NoteHead::LayoutData*>(ldata), ctx);
+        break;
+    case ElementType::ORGAN_REGISTRATION:
+        layoutOrganRegistration(item_cast<const OrganRegistration*>(item), static_cast<OrganRegistration::LayoutData*>(ldata));
         break;
     case ElementType::ORNAMENT:
         layoutOrnament(item_cast<const Ornament*>(item), static_cast<Ornament::LayoutData*>(ldata), ctx.conf());
@@ -4406,6 +4410,25 @@ void TLayout::layoutNoteDot(const NoteDot* item, NoteDot::LayoutData* ldata)
     }
 
     ldata->setBbox(item->symBbox(SymId::augmentationDot));
+}
+
+void TLayout::layoutOrganRegistration(const OrganRegistration* item, OrganRegistration::LayoutData* ldata)
+{
+    LAYOUT_CALL_ITEM(item);
+    const_cast<OrganRegistration*>(item)->updateRegistrationText();
+
+    layoutBaseTextBase(item, ldata);
+
+    if (item->autoplace()) {
+        const Segment* s = toSegment(item->explicitParent());
+        const Measure* m = s->measure();
+
+        LD_CONDITION(ldata->isSetPos());
+        LD_CONDITION(m->ldata()->isSetPos());
+        LD_CONDITION(s->ldata()->isSetPos());
+    }
+
+    Autoplace::autoplaceSegmentElement(item, ldata);
 }
 
 void TLayout::layoutOrnament(const Ornament* item, Ornament::LayoutData* ldata, const LayoutConfiguration& conf)

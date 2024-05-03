@@ -38,6 +38,7 @@
 #include "score.h"
 #include "staff.h"
 #include "stringtunings.h"
+#include "organregistration.h"
 
 #include "log.h"
 
@@ -705,6 +706,9 @@ void Part::insertTime(const Fraction& tick, const Fraction& len)
 
         // remove harp pedal diagrams between tickpo >= tick
         harpDiagrams.erase(harpDiagrams.lower_bound(tick.ticks()), harpDiagrams.lower_bound((tick - len).ticks()));
+
+        // remove organ registrations between tickpo >= tick
+        organRegistrations.erase(organRegistrations.lower_bound(tick.ticks()), organRegistrations.lower_bound((tick - len).ticks()));
     }
 
     InstrumentList il;
@@ -725,6 +729,15 @@ void Part::insertTime(const Fraction& tick, const Fraction& len)
         hd2[t + len.ticks()] = diagram;
     }
     harpDiagrams.insert(hd2.begin(), hd2.end());
+
+    std::map<int, OrganRegistration*> or2;
+    for (auto r = organRegistrations.lower_bound(tick.ticks()); r != organRegistrations.end();) {
+        OrganRegistration* registration = r->second;
+        int t = r->first;
+        organRegistrations.erase(r++);
+        or2[t + len.ticks()] = registration;
+    }
+    organRegistrations.insert(or2.begin(), or2.end());
 }
 
 //---------------------------------------------------------
@@ -809,6 +822,94 @@ Fraction Part::currentHarpDiagramTick(const Fraction& tick) const
     }
     auto i = harpDiagrams.upper_bound(tick.ticks());
     if (i == harpDiagrams.begin()) {
+        return Fraction(0, 1);
+    }
+    --i;
+    return Fraction::fromTicks(i->first);
+}
+
+//---------------------------------------------------------
+//   addOrganRegistration
+//---------------------------------------------------------
+
+void Part::addOrganRegistration(OrganRegistration* organRegistration)
+{
+    organRegistrations[organRegistration->segment()->tick().ticks()] = organRegistration;
+}
+
+//---------------------------------------------------------
+//   removeOrganRegistration
+//---------------------------------------------------------
+
+void Part::removeOrganRegistration(OrganRegistration* organRegistration)
+{
+    if (organRegistrations[organRegistration->segment()->tick().ticks()] == organRegistration) {
+        organRegistrations.erase(organRegistration->segment()->tick().ticks());
+    }
+}
+
+//---------------------------------------------------------
+//   clearOrganRegistrations
+//---------------------------------------------------------
+
+void Part::clearOrganRegistrations()
+{
+    organRegistrations.clear();
+}
+
+//---------------------------------------------------------
+//   currentOrganRegistration
+//---------------------------------------------------------
+
+OrganRegistration* Part::currentOrganRegistration(const Fraction& tick) const
+{
+    auto i = organRegistrations.upper_bound(tick.ticks());
+    if (i != organRegistrations.begin()) {
+        --i;
+    }
+    if (i == organRegistrations.end()) {
+        return nullptr;
+    } else if (tick < Fraction::fromTicks(i->first)) {
+        return nullptr;
+    }
+    return i->second;
+}
+
+//---------------------------------------------------------
+//   nextOrganRegistration
+//---------------------------------------------------------
+
+OrganRegistration* Part::nextOrganRegistration(const Fraction& tick) const
+{
+    auto i = organRegistrations.upper_bound(tick.ticks());
+    return (i == organRegistrations.end()) ? nullptr : i->second;
+}
+
+//---------------------------------------------------------
+//   prevOrganRegistration
+//---------------------------------------------------------
+
+OrganRegistration* Part::prevOrganRegistration(const Fraction& tick) const
+{
+    auto i = organRegistrations.lower_bound(tick.ticks());
+    if (i == organRegistrations.begin()) {
+        return nullptr;
+    }
+    i--;
+    return i->second;
+}
+
+//---------------------------------------------------------
+//   currentOrganRegistration
+//---------------------------------------------------------
+
+Fraction Part::currentOrganRegistrationTick(const Fraction& tick) const
+{
+    if (organRegistrations.empty()) {
+        return Fraction(0, 1);
+    }
+    auto i = organRegistrations.upper_bound(tick.ticks());
+    if (i == organRegistrations.begin()) {
         return Fraction(0, 1);
     }
     --i;

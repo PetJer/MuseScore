@@ -291,6 +291,10 @@ public:
     static StringTunings* copyStringTunings(const StringTunings& src);
     static std::shared_ptr<StringTunings> makeStringTunings(Segment* parent);
 
+    static OrganRegistration* createOrganRegistration(Segment* parent, bool isAccessibleEnabled = true);
+    static OrganRegistration* copyOrganRegistration(const OrganRegistration& src);
+    static std::shared_ptr<OrganRegistration> makeOrganRegistration(Segment* parent);
+
 private:
     static EngravingItem* doCreateItem(ElementType type, EngravingItem* parent);
 };

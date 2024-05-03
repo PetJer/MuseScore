@@ -63,6 +63,7 @@
 #include "dom/measurenumber.h"
 #include "dom/measurerepeat.h"
 #include "dom/note.h"
+#include "dom/organregistration.h"
 #include "dom/ornament.h"
 #include "dom/ottava.h"
 #include "dom/palmmute.h"
@@ -176,6 +177,8 @@ void SingleLayout::layoutItem(EngravingItem* item)
     case ElementType::MEASURE_REPEAT: layout(toMeasureRepeat(item), ctx);
         break;
     case ElementType::NOTEHEAD:     layout(toNoteHead(item), ctx);
+        break;
+    case ElementType::ORGAN_REGISTRATION: layout(toOrganRegistration(item), ctx);
         break;
     case ElementType::OTTAVA:       layout(toOttava(item), ctx);
         break;
@@ -1324,6 +1327,12 @@ void SingleLayout::layout(MeasureRepeat* item, const Context& ctx)
 
     RectF bbox = item->symBbox(ldata->symId);
     ldata->setBbox(bbox);
+}
+
+void SingleLayout::layout(OrganRegistration* item, const Context& ctx)
+{
+    item->updateRegistrationText();
+    layoutTextBase(item, ctx, item->mutldata());
 }
 
 void SingleLayout::layout(Ornament* item, const Context& ctx)

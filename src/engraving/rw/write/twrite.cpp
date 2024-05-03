@@ -104,6 +104,7 @@
 #include "dom/note.h"
 #include "dom/notedot.h"
 #include "dom/noteline.h"
+#include "dom/organregistration.h"
 #include "dom/ornament.h"
 #include "dom/ottava.h"
 
@@ -270,6 +271,8 @@ void TWrite::writeItem(const EngravingItem* item, XmlWriter& xml, WriteContext& 
     case ElementType::NOTEHEAD:     write(item_cast<const NoteHead*>(item), xml, ctx);
         break;
     case ElementType::NOTELINE:     write(item_cast<const NoteLine*>(item), xml, ctx);
+        break;
+    case ElementType::ORGAN_REGISTRATION: write(item_cast<const OrganRegistration*>(item), xml, ctx);
         break;
     case ElementType::ORNAMENT:     write(item_cast<const Ornament*>(item), xml, ctx);
         break;
@@ -2274,6 +2277,25 @@ void TWrite::write(const NoteLine* item, XmlWriter& xml, WriteContext& ctx)
     }
     xml.startElement(item);
     writeProperties(static_cast<const TextLineBase*>(item), xml, ctx);
+    xml.endElement();
+}
+
+void TWrite::write(const OrganRegistration* item, XmlWriter& xml, WriteContext& ctx)
+{
+    if (!ctx.canWrite(item)) {
+        return;
+    }
+    xml.startElement(item);
+    // writeProperty(item, xml, Pid::HARP_IS_DIAGRAM);
+
+    // Write vector of organ strings.  Order is always D, C, B, E, F, G, A
+    xml.startElement("registrationState");
+    for (size_t idx = 0; idx < item->getRegistrationState().size(); idx++) {
+        // xml.tag("string", { { "name", idx } }, static_cast<int>(item->getRegistrationState().at(idx)));
+    }
+    xml.endElement();
+
+    writeProperties(static_cast<const TextBase*>(item), xml, ctx, true);
     xml.endElement();
 }
 

@@ -88,7 +88,8 @@ public:
         Harp,
         StringTunings,
         Playback,
-        Custom
+        Custom,
+        Organ
     };
     Q_ENUM(Type)
 

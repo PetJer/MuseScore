@@ -101,6 +101,7 @@ public:
         TEXT_TYPE_STRING_NUMBER,
         TEXT_TYPE_HARP_PEDAL_DIAGRAM,
         TEXT_TYPE_HARP_PEDAL_TEXT_DIAGRAM,
+        TEXT_TYPE_ORGAN_REGISTRATION,
         TEXT_TYPE_TEXTLINE,
         TEXT_TYPE_VOLTA,
         TEXT_TYPE_OTTAVA,
@@ -162,6 +163,7 @@ static const QList<mu::engraving::ElementType> TEXT_ELEMENT_TYPES = {
     mu::engraving::ElementType::CAPO,
     mu::engraving::ElementType::STRING_TUNINGS,
     mu::engraving::ElementType::HARP_DIAGRAM,
+    mu::engraving::ElementType::ORGAN_REGISTRATION,
     mu::engraving::ElementType::SOUND_FLAG
 };
 }

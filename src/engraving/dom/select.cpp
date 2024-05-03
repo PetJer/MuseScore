@@ -64,6 +64,7 @@
 #include "tie.h"
 #include "guitarbend.h"
 #include "fret.h"
+#include "organregistration.h"
 
 #include "tremolotwochord.h"
 #include "tremolosinglechord.h"
@@ -1121,6 +1122,9 @@ muse::ByteArray Selection::symbolListMimeData() const
             break;
         case ElementType::HARP_DIAGRAM:
             seg = toHarpPedalDiagram(e)->segment();
+            break;
+        case ElementType::ORGAN_REGISTRATION:
+            seg = toOrganRegistration(e)->segment();
             break;
         default:
             continue;

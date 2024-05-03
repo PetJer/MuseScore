@@ -106,6 +106,7 @@
 #include "../../dom/textlinebase.h"
 #include "../../dom/groups.h"
 #include "../../dom/harppedaldiagram.h"
+#include "../../dom/organregistration.h"
 #include "../../dom/hairpin.h"
 #include "../../dom/keysig.h"
 #include "../../dom/layoutbreak.h"
@@ -160,7 +161,7 @@ using ReadTypes = rtti::TypeList<Accidental, ActionIcon, Ambitus, Arpeggio, Arti
                                  Note, NoteDot, NoteHead, NoteLine,
                                  Page, PalmMute, Pedal, PlayTechAnnotation,
                                  Rasgueado, RehearsalMark, Rest,
-                                 Ornament, Ottava,
+                                 OrganRegistration, Ornament, Ottava,
                                  Segment, Slur, Spacer, StaffState, StaffText, StaffTypeChange, Stem, StemSlash, Sticking,
                                  Symbol, FSymbol, System, SystemDivider, SystemText,
                                  TempoText, Text, TextLine, Tie, TimeSig, TremoloBar, Trill, Tuplet,
@@ -1781,6 +1782,32 @@ void TRead::read(Arpeggio* a, XmlReader& e, ReadContext& ctx)
             a->setStretch(e.readDouble());
         } else if (!readItemProperties(a, e, ctx)) {
             e.unknown();
+        }
+    }
+}
+
+void TRead::read(OrganRegistration* r, XmlReader& xml, ReadContext& ctx)
+{
+    while (xml.readNextStartElement()) {
+        const AsciiStringView tag = xml.name();
+        if (tag == "isRegistration") {
+            // r->setIsRegistration(xml.readBool());
+            int a = 0;;
+        } else if (tag == "registrationState") {
+            while (xml.readNextStartElement()) {
+                const AsciiStringView stringTag = xml.name();
+                if (stringTag == "string") {
+                    // OrganStringType str = OrganStringType(xml.intAttribute("name"));
+                    // RegistrationPosition pos = RegistrationPosition(xml.readInt());
+                    // r->setRegistration(str, pos);
+                    int b = 0;;
+                } else {
+                    xml.unknown();
+                }
+            }
+            // r->setPlayableTpcs();
+        } else if (!readProperties(r, xml, ctx)) {
+            xml.unknown();
         }
     }
 }

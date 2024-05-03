@@ -1127,6 +1127,18 @@ void SystemLayout::layoutSystemElements(System* system, LayoutContext& ctx)
         }
     }
 
+    //-------------------------------------------------------------
+    // Organ registrations
+    //-------------------------------------------------------------
+
+    for (const Segment* s : sl) {
+        for (EngravingItem* e : s->annotations()) {
+            if (e->isOrganRegistration()) {
+                TLayout::layoutItem(e, ctx);
+            }
+        }
+    }
+
     //
     // We need to known if we have FretDiagrams in the system to decide when to layout the Harmonies
     //

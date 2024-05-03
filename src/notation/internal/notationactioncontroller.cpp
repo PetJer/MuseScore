@@ -2005,7 +2005,7 @@ const mu::engraving::Harmony* NotationActionController::editedChordSymbol() cons
 
 bool NotationActionController::elementHasPopup(EngravingItem* e)
 {
-    if (e->isHarpPedalDiagram()) {
+    if (e->isHarpPedalDiagram() || e->isOrganRegistration()) {
         return true;
     }
 

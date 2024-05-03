@@ -80,6 +80,7 @@
 #include "tie.h"
 #include "tiemap.h"
 #include "timesig.h"
+#include "organregistration.h"
 
 #include "tremolotwochord.h"
 #include "tremolosinglechord.h"
@@ -938,6 +939,15 @@ TextBase* Score::addText(TextStyleType type, EngravingItem* destinationElement)
             break;
         }
         textBox = Factory::createHarpPedalDiagram(this->dummy()->segment());
+        chordRest->undoAddAnnotation(textBox);
+        break;
+    }
+    case TextStyleType::ORGAN_REGISTRATION: {
+        ChordRest* chordRest = getSelectedChordRest();
+        if (!chordRest) {
+            break;
+        }
+        textBox = Factory::createOrganRegistration(this->dummy()->segment());
         chordRest->undoAddAnnotation(textBox);
         break;
     }
@@ -5870,6 +5880,7 @@ void Score::undoAddElement(EngravingItem* element, bool addToLinkedStaves, bool 
             && et != ElementType::FERMATA
             && et != ElementType::HARMONY
             && et != ElementType::HARP_DIAGRAM
+            && et != ElementType::ORGAN_REGISTRATION
             && et != ElementType::FIGURED_BASS)
         ) {
         doUndoAddElement(element);
@@ -6101,6 +6112,7 @@ void Score::undoAddElement(EngravingItem* element, bool addToLinkedStaves, bool 
                      || element->isFermata()
                      || element->isHarmony()
                      || element->isHarpPedalDiagram()
+                     || element->isOrganRegistration()
                      || element->isFiguredBass()) {
                 Segment* segment
                     = element->explicitParent()->isFretDiagram() ? toSegment(element->explicitParent()->explicitParent()) : toSegment(

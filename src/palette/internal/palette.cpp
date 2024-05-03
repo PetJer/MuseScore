@@ -615,6 +615,8 @@ Palette::Type Palette::guessType() const
         return Type::Accordion;
     case ElementType::HARP_DIAGRAM:
         return Type::Harp;
+    case ElementType::ORGAN_REGISTRATION:
+        return Type::Organ;
     case ElementType::STRING_TUNINGS:
         return Type::StringTunings;
     case ElementType::ACTION_ICON: {

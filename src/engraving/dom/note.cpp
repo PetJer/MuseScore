@@ -1716,6 +1716,7 @@ bool Note::acceptDrop(EditData& data) const
            || (type == ElementType::FIGURED_BASS)
            || (type == ElementType::LYRICS)
            || (type == ElementType::HARP_DIAGRAM)
+           || (type == ElementType::ORGAN_REGISTRATION)
            || (type != ElementType::TIE && e->isSpanner())
            || (type == ElementType::ACTION_ICON && toActionIcon(e)->actionType() == ActionIconType::STANDARD_BEND)
            || (type == ElementType::ACTION_ICON && toActionIcon(e)->actionType() == ActionIconType::PRE_BEND)

@@ -296,6 +296,7 @@ EngravingItem* ChordRest::drop(EditData& data)
     case ElementType::STICKING:
     case ElementType::STAFF_STATE:
     case ElementType::HARP_DIAGRAM:
+    case ElementType::ORGAN_REGISTRATION:
     // fall through
     case ElementType::REHEARSAL_MARK:
     {

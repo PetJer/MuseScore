@@ -79,6 +79,8 @@
 #include "../../dom/note.h"
 #include "../../dom/notedot.h"
 
+#include "../../dom/organregistration.h"
+
 #include "../../dom/playtechannotation.h"
 
 #include "../../dom/rehearsalmark.h"
@@ -278,6 +280,8 @@ public:
     static void layoutNote(const Note* item, Note::LayoutData* ldata);
     static void fillNoteShape(const Note* item, Note::LayoutData* ldata);
     static void layoutNoteDot(const NoteDot* item, NoteDot::LayoutData* ldata);
+
+    static void layoutOrganRegistration(const OrganRegistration* item, OrganRegistration::LayoutData* ldata);
 
     static void layoutOrnament(const Ornament* item, Ornament::LayoutData* ldata, const LayoutConfiguration& conf);
     static void layoutOrnamentCueNote(Ornament* item, LayoutContext& ctx);

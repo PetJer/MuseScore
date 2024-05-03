@@ -63,6 +63,7 @@
 #include "synthesizerstate.h"
 #include "soundflag.h"
 #include "text.h"
+#include "organregistration.h"
 
 #include "tremolotwochord.h"
 #include "tremolobar.h"
@@ -94,6 +95,7 @@ class Spanner;
 class Staff;
 class Text;
 class TremoloBar;
+class OrganRegistration;
 
 enum class PlayEventType : char;
 
@@ -1636,6 +1638,14 @@ public:
 //    UNDO_CHANGED_OBJECTS({ diagram });
     std::vector<const EngravingObject*> objectItems() const override;
 };
+
+//---------------------------------------------------------
+//   OrganRegistration
+//---------------------------------------------------------
+
+/*
+ * TODO options
+*/
 
 class ChangeStringData : public UndoCommand
 {

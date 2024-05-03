@@ -104,6 +104,7 @@
 #include "tie.h"
 #include "timesig.h"
 #include "anchors.h"
+#include "organregistration.h"
 
 #include "tremolotwochord.h"
 #include "tremolosinglechord.h"
@@ -233,6 +234,7 @@ EngravingItem* Factory::doCreateItem(ElementType type, EngravingItem* parent)
     case ElementType::FRET_CIRCLE:       return new FretCircle(parent->isChord() ? toChord(parent) : dummy->chord());
     case ElementType::STRING_TUNINGS:      return new StringTunings(parent->isSegment() ? toSegment(parent) : dummy->segment());
     case ElementType::TIME_TICK_ANCHOR:  return new TimeTickAnchor(parent->isSegment() ? toSegment(parent) : dummy->segment());
+    case ElementType::ORGAN_REGISTRATION: return new OrganRegistration(parent->isSegment() ? toSegment(parent) : dummy->segment());
 
     case ElementType::LYRICSLINE:
     case ElementType::TEXTLINE_BASE:
@@ -436,6 +438,10 @@ COPY_ITEM_IMPL(MeasureRepeat)
 CREATE_ITEM_IMPL(StringTunings, ElementType::STRING_TUNINGS, Segment, isAccessibleEnabled)
 COPY_ITEM_IMPL(StringTunings)
 MAKE_ITEM_IMPL(StringTunings, Segment);
+
+CREATE_ITEM_IMPL(OrganRegistration, ElementType::ORGAN_REGISTRATION, Segment, isAccessibleEnabled)
+COPY_ITEM_IMPL(OrganRegistration)
+MAKE_ITEM_IMPL(OrganRegistration, Segment);
 
 CREATE_ITEM_IMPL(Note, ElementType::NOTE, Chord, isAccessibleEnabled)
 Note* Factory::copyNote(const Note& src, bool link)

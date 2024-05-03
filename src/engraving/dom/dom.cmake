@@ -365,4 +365,6 @@ set(DOM_SRC
     ${CMAKE_CURRENT_LIST_DIR}/volta.h
     ${CMAKE_CURRENT_LIST_DIR}/whammybar.cpp
     ${CMAKE_CURRENT_LIST_DIR}/whammybar.h
+    ${CMAKE_CURRENT_LIST_DIR}/organregistration.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/organregistration.h
 )

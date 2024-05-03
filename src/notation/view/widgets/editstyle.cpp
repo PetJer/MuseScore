@@ -138,6 +138,7 @@ static const QStringList ALL_TEXT_STYLE_SUBPAGE_CODES {
     "string-tunings",
     "harp-pedal-diagram",
     "harp-pedal-text-diagram",
+    "organ-registration",
     "text-line",
     "volta",
     "ottava",
@@ -1397,7 +1398,8 @@ QString EditStyle::pageCodeForElement(const EngravingItem* element)
 
     case ElementType::INSTRUMENT_NAME:
     case ElementType::TEXT:
-    case ElementType::HARP_DIAGRAM: {
+    case ElementType::HARP_DIAGRAM:
+    case ElementType::ORGAN_REGISTRATION: {
         if (element->isText()) {
             if (toText(element)->textStyleType() == TextStyleType::FOOTER
                 || toText(element)->textStyleType() == TextStyleType::HEADER) {
@@ -1660,6 +1662,9 @@ QString EditStyle::subPageCodeForElement(const EngravingItem* element)
 
         case TextStyleType::HARP_PEDAL_TEXT_DIAGRAM:
             return "harp-pedal-text-diagram";
+
+        case TextStyleType::ORGAN_REGISTRATION:
+            return "organ-registration";
 
         case TextStyleType::TEXTLINE:
             return "text-line";

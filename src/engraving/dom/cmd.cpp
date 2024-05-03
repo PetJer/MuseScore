@@ -2656,7 +2656,8 @@ void Score::cmdResetToDefaultLayout()
         Sid::pageTwosided,
         Sid::spatium,
         Sid::concertPitch,
-        Sid::createMultiMeasureRests
+        Sid::createMultiMeasureRests,
+        Sid::organRegistrationPlacement,
     };
 
     auto resetPositionAndTextProperties = [](void* ptr, EngravingItem* e) {

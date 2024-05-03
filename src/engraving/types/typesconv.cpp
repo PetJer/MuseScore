@@ -224,6 +224,7 @@ static const std::vector<Item<ElementType> > ELEMENT_TYPES = {
     { ElementType::HARMONY,              "Harmony",              muse::TranslatableString("engraving", "Chord symbol") },
     { ElementType::FRET_DIAGRAM,         "FretDiagram",          muse::TranslatableString("engraving", "Fretboard diagram") },
     { ElementType::HARP_DIAGRAM,         "HarpPedalDiagram",     muse::TranslatableString("engraving", "Harp pedal diagram") },
+    { ElementType::ORGAN_REGISTRATION,         "OrganRegistration",     muse::TranslatableString("engraving", "Organ registration") },
     { ElementType::BEND,                 "Bend",                 muse::TranslatableString("engraving", "Bend") },
     { ElementType::STRETCHED_BEND,       "Bend",                 muse::TranslatableString("engraving", "Bend") },
     { ElementType::TREMOLOBAR,           "TremoloBar",           muse::TranslatableString("engraving", "Tremolo bar") },
@@ -1102,6 +1103,7 @@ static const std::vector<Item<TextStyleType> > TEXTSTYLE_TYPES = {
     { TextStyleType::STRING_TUNINGS,    "string_tunings", muse::TranslatableString("engraving", "String tunings") },
     { TextStyleType::HARP_PEDAL_DIAGRAM, "harp_pedal_diagram",  muse::TranslatableString("engraving", "Harp pedal diagram") },
     { TextStyleType::HARP_PEDAL_TEXT_DIAGRAM, "harp_pedal_text_diagram", muse::TranslatableString("engraving", "Harp pedal text diagram") },
+    { TextStyleType::ORGAN_REGISTRATION, "organ_registration",  muse::TranslatableString("engraving", "Organ registration") },
 
     { TextStyleType::TEXTLINE,          "textline",             muse::TranslatableString("engraving", "Text line") },
     { TextStyleType::VOLTA,             "volta",                muse::TranslatableString("engraving", "Volta") },

@@ -83,6 +83,7 @@
 
 #include "dom/note.h"
 
+#include "dom/organregistration.h"
 #include "dom/ornament.h"
 #include "dom/ottava.h"
 
@@ -248,6 +249,8 @@ void SingleDraw::drawItem(const EngravingItem* item, Painter* painter)
     case ElementType::NOTEHEAD:             draw(item_cast<const NoteHead*>(item), painter);
         break;
 
+    case ElementType::ORGAN_REGISTRATION: draw(item_cast<const OrganRegistration*>(item), painter);
+        break;
     case ElementType::ORNAMENT:             draw(item_cast<const Ornament*>(item), painter);
         break;
     case ElementType::OTTAVA_SEGMENT:       draw(item_cast<const OttavaSegment*>(item), painter);
@@ -1996,6 +1999,12 @@ void SingleDraw::draw(const MeasureRepeat* item, Painter* painter)
     const MeasureRepeat::LayoutData* ldata = item->ldata();
     painter->setPen(item->curColor());
     item->drawSymbol(ldata->symId, painter);
+}
+
+void SingleDraw::draw(const OrganRegistration* item, Painter* painter)
+{
+    TRACE_DRAW_ITEM;
+    drawTextBase(item, painter);
 }
 
 void SingleDraw::draw(const OttavaSegment* item, Painter* painter)

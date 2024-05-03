@@ -85,6 +85,7 @@
 #include "engraving/dom/trill.h"
 #include "engraving/dom/vibrato.h"
 #include "engraving/dom/volta.h"
+#include "engraving/dom/organregistration.h"
 
 using namespace mu;
 using namespace mu::palette;
@@ -149,6 +150,7 @@ PaletteTreePtr PaletteCreator::newMasterPaletteTree()
     tree->append(newBagpipeEmbellishmentPalette());
     tree->append(newBeamPalette());
     tree->append(newLinesPalette());
+    tree->append(newOrganPalette());
 
     return tree;
 }
@@ -185,6 +187,7 @@ PaletteTreePtr PaletteCreator::newDefaultPaletteTree()
     defaultPalette->append(newBagpipeEmbellishmentPalette());
     defaultPalette->append(newBeamPalette());
     defaultPalette->append(newLinesPalette(true));
+    defaultPalette->append(newOrganPalette());
 
     return defaultPalette;
 }
@@ -2088,6 +2091,20 @@ PalettePtr PaletteCreator::newHarpPalette()
     pedalTextDiagram->setIsDiagram(false);
 
     sp->appendElement(pedalTextDiagram, QT_TRANSLATE_NOOP("palette", "Harp pedal text diagram"));
+
+    return sp;
+}
+
+PalettePtr PaletteCreator::newOrganPalette()
+{
+    PalettePtr sp = std::make_shared<Palette>(Palette::Type::Organ);
+    sp->setName("Organ"); // QT_TRANSLATE_NOOP("palette", "Organ")
+    sp->setGridSize(90, 30);
+    sp->setDrawGrid(true);
+    sp->setVisible(false);
+
+    auto registration = Factory::makeOrganRegistration(gpaletteScore->dummy()->segment());
+    sp->appendElement(registration, "Organ registration"); // QT_TRANSLATE_NOOP("palette", "Organ registration")
 
     return sp;
 }

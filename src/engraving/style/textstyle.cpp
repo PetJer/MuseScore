@@ -279,6 +279,24 @@ const TextStyle harpPedalTextDiagramTextStyle { {
     { TextStylePropertyType::MusicalSymbolsScale,  Sid::dummyMusicalSymbolsScale,               Pid::MUSICAL_SYMBOLS_SCALE },
 } };
 
+const TextStyle organRegistrationTextStyle { {
+   { TextStylePropertyType::FontFace,             Sid::organRegistrationFontFace,               Pid::FONT_FACE },
+   { TextStylePropertyType::FontSize,             Sid::organRegistrationFontSize,               Pid::FONT_SIZE },
+   { TextStylePropertyType::LineSpacing,          Sid::organRegistrationLineSpacing,            Pid::TEXT_LINE_SPACING },
+   { TextStylePropertyType::SizeSpatiumDependent, Sid::organRegistrationFontSpatiumDependent,   Pid::SIZE_SPATIUM_DEPENDENT },
+   { TextStylePropertyType::FontStyle,            Sid::organRegistrationFontStyle,              Pid::FONT_STYLE },
+   { TextStylePropertyType::Color,                Sid::organRegistrationColor,                  Pid::COLOR },
+   { TextStylePropertyType::TextAlign,            Sid::organRegistrationAlign,                  Pid::ALIGN },
+   { TextStylePropertyType::Offset,               Sid::organRegistrationOffset,                 Pid::OFFSET },
+   { TextStylePropertyType::FrameType,            Sid::organRegistrationFrameType,              Pid::FRAME_TYPE },
+   { TextStylePropertyType::FramePadding,         Sid::organRegistrationFramePadding,           Pid::FRAME_PADDING },
+   { TextStylePropertyType::FrameWidth,           Sid::organRegistrationFrameWidth,             Pid::FRAME_WIDTH },
+   { TextStylePropertyType::FrameRound,           Sid::organRegistrationFrameRound,             Pid::FRAME_ROUND },
+   { TextStylePropertyType::FrameBorderColor,     Sid::organRegistrationFrameFgColor,           Pid::FRAME_FG_COLOR },
+   { TextStylePropertyType::FrameFillColor,       Sid::organRegistrationFrameBgColor,           Pid::FRAME_BG_COLOR },
+   { TextStylePropertyType::MusicalSymbolsScale,  Sid::organRegistrationMusicalSymbolsScale,    Pid::MUSICAL_SYMBOLS_SCALE },
+   } };
+
 const TextStyle longInstrumentTextStyle { {
     { TextStylePropertyType::FontFace,             Sid::longInstrumentFontFace,                 Pid::FONT_FACE },
     { TextStylePropertyType::FontSize,             Sid::longInstrumentFontSize,                 Pid::FONT_SIZE },
@@ -1174,6 +1192,7 @@ const TextStyle* textStyle(TextStyleType idx)
     case TextStyleType::STRING_TUNINGS: return &stringTuningsStyle; // todo
     case TextStyleType::HARP_PEDAL_DIAGRAM: return &harpPedalDiagramTextStyle;
     case TextStyleType::HARP_PEDAL_TEXT_DIAGRAM: return &harpPedalTextDiagramTextStyle;
+    case TextStyleType::ORGAN_REGISTRATION: return &organRegistrationTextStyle;
 
     case TextStyleType::TEXTLINE: return &textLineTextStyle;
     case TextStyleType::VOLTA: return &voltaTextStyle;

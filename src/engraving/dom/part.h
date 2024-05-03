@@ -167,6 +167,14 @@ public:
     HarpPedalDiagram* prevHarpDiagram(const Fraction&) const;
     Fraction currentHarpDiagramTick(const Fraction&) const;
 
+    void addOrganRegistration(OrganRegistration*);
+    void removeOrganRegistration(OrganRegistration*);
+    void clearOrganRegistrations();
+    OrganRegistration* currentOrganRegistration(const Fraction&) const;
+    OrganRegistration* nextOrganRegistration(const Fraction&) const;
+    OrganRegistration* prevOrganRegistration(const Fraction&) const;
+    Fraction currentOrganRegistrationTick(const Fraction&) const;
+
     String partName() const { return m_partName; }
     void setPartName(const String& s) { m_partName = s; }
     int color() const { return m_color; }
@@ -198,6 +206,7 @@ public:
     friend void readPart206(Part*, XmlReader&);
 
     std::map<int, HarpPedalDiagram*> harpDiagrams;
+    std::map<int, OrganRegistration*> organRegistrations;
 
 private:
     friend class read206::Read206;

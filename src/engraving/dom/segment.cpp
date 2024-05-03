@@ -56,6 +56,7 @@
 #include "tuplet.h"
 #include "undo.h"
 #include "utils.h"
+#include "organregistration.h"
 
 #include "navigate.h"
 
@@ -716,6 +717,15 @@ void Segment::add(EngravingItem* el)
         m_annotations.push_back(el);
         break;
 
+    case ElementType::ORGAN_REGISTRATION:
+        // already a registration in this segment
+        if (el->part()->organRegistrations.count(toOrganRegistration(el)->segment()->tick().ticks()) > 0) {
+            break;
+        }
+        el->part()->addOrganRegistration(toOrganRegistration(el));
+        m_annotations.push_back(el);
+        break;
+
     case ElementType::CLEF:
         assert(m_segmentType == SegmentType::Clef || m_segmentType == SegmentType::HeaderClef);
         checkElement(el, track);
@@ -894,6 +904,11 @@ void Segment::remove(EngravingItem* el)
 
     case ElementType::HARP_DIAGRAM:
         el->part()->removeHarpDiagram(toHarpPedalDiagram(el));
+        removeAnnotation(el);
+        break;
+
+    case ElementType::ORGAN_REGISTRATION:
+        el->part()->removeOrganRegistration(toOrganRegistration(el));
         removeAnnotation(el);
         break;
 
@@ -1928,6 +1943,7 @@ EngravingItem* Segment::nextElement(staff_idx_t activeStaff)
     case ElementType::STAFF_STATE:
     case ElementType::INSTRUMENT_CHANGE:
     case ElementType::HARP_DIAGRAM:
+    case ElementType::ORGAN_REGISTRATION:
     case ElementType::STICKING: {
         EngravingItem* next = nullptr;
         if (e->explicitParent() == this) {
@@ -2082,6 +2098,7 @@ EngravingItem* Segment::prevElement(staff_idx_t activeStaff)
     case ElementType::STAFF_STATE:
     case ElementType::INSTRUMENT_CHANGE:
     case ElementType::HARP_DIAGRAM:
+    case ElementType::ORGAN_REGISTRATION:
     case ElementType::STICKING: {
         if (e->isStaffText()) {
             if (SoundFlag* soundFlag = toStaffText(e)->soundFlag()) {
@@ -2471,6 +2488,7 @@ void Segment::createShape(staff_idx_t staffIdx)
                    && !e->isFermata()
                    && !e->isStaffText()
                    && !e->isHarpPedalDiagram()
+                   && !e->isOrganRegistration()
                    && !e->isPlayTechAnnotation()
                    && !e->isCapo()
                    && !e->isStringTunings()) {

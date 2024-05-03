@@ -601,6 +601,7 @@ bool Read410::pasteStaff(XmlReader& e, Segment* dst, staff_idx_t dstStaff, Fract
                            || tag == "Sticking"
                            || tag == "Fermata"
                            || tag == "HarpPedalDiagram"
+                           || tag == "OrganRegistration"
                            ) {
                     EngravingItem* el = Factory::createItemByName(tag, score->dummy());
                     el->setTrack(ctx.track());                // a valid track might be necessary for el->read() to work
@@ -911,7 +912,7 @@ void Read410::pasteSymbols(XmlReader& e, ChordRest* dst)
                             score->undoAddElement(el);
                         }
                     } else if (tag == "StaffText" || tag == "PlayTechAnnotation" || tag == "Capo" || tag == "Sticking"
-                               || tag == "HarpPedalDiagram" || tag == "StringTunings") {
+                               || tag == "HarpPedalDiagram" || tag == "StringTunings" || tag == "OrganRegistration") {
                         EngravingItem* el = Factory::createItemByName(tag, score->dummy());
                         TRead::readItem(el, e, ctx);
                         el->setTrack(destTrack);

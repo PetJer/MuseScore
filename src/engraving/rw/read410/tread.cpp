@@ -109,6 +109,7 @@
 #include "../../dom/textlinebase.h"
 #include "../../dom/groups.h"
 #include "../../dom/harppedaldiagram.h"
+#include "../../dom/organregistration.h"
 #include "../../dom/hairpin.h"
 #include "../../dom/keysig.h"
 #include "../../dom/layoutbreak.h"
@@ -268,6 +269,8 @@ void TRead::readItem(EngravingItem* item, XmlReader& xml, ReadContext& ctx)
     case ElementType::REHEARSAL_MARK: read(item_cast<RehearsalMark*>(item), xml, ctx);
         break;
     case ElementType::REST: read(item_cast<Rest*>(item), xml, ctx);
+        break;
+    case ElementType::ORGAN_REGISTRATION: read(item_cast<OrganRegistration*>(item), xml, ctx);
         break;
     case ElementType::ORNAMENT: read(item_cast<Ornament*>(item), xml, ctx);
         break;
@@ -3534,6 +3537,32 @@ void TRead::read(NoteDot* d, XmlReader& e, ReadContext& ctx)
 void TRead::read(NoteHead* h, XmlReader& xml, ReadContext& ctx)
 {
     read(static_cast<Symbol*>(h), xml, ctx);
+}
+
+void TRead::read(OrganRegistration* r, XmlReader& xml, ReadContext& ctx)
+{
+    while (xml.readNextStartElement()) {
+        const AsciiStringView tag = xml.name();
+        if (tag == "isRegistration") {
+            // r->setIsRegistration(xml.readBool());
+            int a = 0;
+        } else if (tag == "registrationState") {
+            while (xml.readNextStartElement()) {
+                const AsciiStringView stringTag = xml.name();
+                if (stringTag == "string") {
+                    // OrganStringType str = OrganStringType(xml.intAttribute("name"));
+                    // RegistrationPosition pos = RegistrationPosition(xml.readInt());
+                    // r->setRegistration(str, pos);
+                    int b = 0;
+                } else {
+                    xml.unknown();
+                }
+            }
+            // r->setPlayableTpcs();
+        } else if (!readProperties(r, xml, ctx)) {
+            xml.unknown();
+        }
+    }
 }
 
 void TRead::read(Ottava* o, XmlReader& e, ReadContext& ctx)
