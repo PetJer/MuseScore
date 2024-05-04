@@ -226,24 +226,55 @@ void OrganRegistration::updateRegistrationText()
 
 /*
  * ADD UNDO REGISTRATION FUNCTION
-*/
+ */
 
+// Surely you can get this values from styledef... Hardcoded for now
 PropertyValue OrganRegistration::getProperty(Pid propertyId) const
 {
     switch (propertyId) {
     case Pid::TEXT_STYLE:
         return TextStyleType::ORGAN_REGISTRATION;
+    case Pid::FONT_SIZE:
+        return 8.0;
+    case Pid::TEXT_LINE_SPACING:
+        return 0.8;
+    case Pid::ALIGN:
+        return Align(AlignH::LEFT, AlignV::VCENTER);
+    case Pid::FRAME_TYPE:
+        return int(FrameType::SQUARE);
+    case Pid::FRAME_PADDING:
+        return 1.0;
     default:
-        return TextBase::getProperty(propertyId);
+        return TextBase::propertyDefault(propertyId);
     }
 }
 
 bool OrganRegistration::setProperty(Pid propertyId, const PropertyValue& v)
 {
-    setTextStyleType(TextStyleType::ORGAN_REGISTRATION);
-
-    if (!TextBase::setProperty(propertyId, v)) {
-        return false;
+    switch (propertyId) {
+    case Pid::TEXT_STYLE:
+        setTextStyleType(TextStyleType::ORGAN_REGISTRATION);
+        break;
+    case Pid::FONT_SIZE:
+        setSize(8.0);
+        break;
+    case Pid::TEXT_LINE_SPACING:
+        setTextLineSpacing(0.8);
+        break;
+    case Pid::ALIGN:
+        setAlign(Align(AlignH::LEFT, AlignV::VCENTER));
+        break;
+    case Pid::FRAME_TYPE:
+        setFrameType(FrameType::SQUARE);
+        break;
+    case Pid::FRAME_PADDING:
+        setPaddingWidth(Spatium(1.0));
+        break;
+    default:
+        qDebug("setpropetry");
+        if (!TextBase::setProperty(propertyId, v)) {
+            return false;
+        }
     }
 
     return true;
@@ -254,6 +285,16 @@ PropertyValue OrganRegistration::propertyDefault(Pid id) const
     switch (id) {
     case Pid::TEXT_STYLE:
         return TextStyleType::ORGAN_REGISTRATION;
+    case Pid::FONT_SIZE:
+        return 8.0;
+    case Pid::TEXT_LINE_SPACING:
+        return 0.8;
+    case Pid::ALIGN:
+        return Align(AlignH::LEFT, AlignV::VCENTER);
+    case Pid::FRAME_TYPE:
+        return int(FrameType::SQUARE);
+    case Pid::FRAME_PADDING:
+        return 1.0;
     default:
         return TextBase::propertyDefault(id);
     }
