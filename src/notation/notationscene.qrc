@@ -43,5 +43,6 @@
         <file>qml/MuseScore/NotationScene/internal/StringTuningsPopup.qml</file>
         <file>qml/MuseScore/NotationScene/internal/EditStyle/FullBendStyleSelector.qml</file>
         <file>qml/MuseScore/NotationScene/internal/EditStyle/TiePlacementSelector.qml</file>
+        <file>qml/MuseScore/NotationScene/internal/OrganRegistrationPopup.qml</file>
     </qresource>
 </RCC>
