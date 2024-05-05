@@ -28,13 +28,10 @@
 #include "context/iglobalcontext.h"
 
 #include "engraving/dom/organregistration.h"
-#include "engraving/dom/undo.h"
 
 #include "view/abstractelementpopupmodel.h"
 
 namespace mu::notation {
-static constexpr int ORGAN_STRING_NO = 7;
-
 class OrganRegistrationPopupModel : public AbstractElementPopupModel
 {
     Q_OBJECT
@@ -42,49 +39,45 @@ class OrganRegistrationPopupModel : public AbstractElementPopupModel
     INJECT(context::IGlobalContext, globalContext)
 
     Q_PROPERTY(
-        QVector<mu::notation::OrganRegistrationPopupModel::Position> pedalState READ pedalState WRITE setDiagramPedalState NOTIFY pedalStateChanged)
+        QVector<QStringList> stops READ stops WRITE setStops NOTIFY stopsChanged)
     Q_PROPERTY(QRectF staffPos READ staffPos CONSTANT)
 
 public:
-    enum class Position {
-        FLAT,
-        NATURAL,
-        SHARP,
-
-        UNSET
-    };
-    Q_ENUM(Position)
-
     explicit OrganRegistrationPopupModel(QObject* parent = nullptr);
 
     QRectF staffPos() const;
 
-    QVector<Position> pedalState() const;
+    QVector<QStringList> stops() const;
 
     Q_INVOKABLE void init() override;
 
 public slots:
-    void setDiagramPedalState(QVector<mu::notation::OrganRegistrationPopupModel::Position> pedalState);
+    void setStops(QVector<QStringList> stops);
 
 signals:
-    void pedalStateChanged(QVector<mu::notation::OrganRegistrationPopupModel::Position> pedalState);
+    void stopsChanged(QVector<QStringList> stops);
 
 private:
     void load();
 
-    // Convert between mu::engraving::PedalPosition and internal qml safe Position enums
-    void setPopupPedalState(std::array<mu::engraving::PedalPosition, ORGAN_STRING_NO> pos);
+    void setPopupStops(std::array<QStringList, 3> stops);
+    std::array<QStringList, 3> m_stops;
 
-    void setPopupPedalState(std::array<OrganRegistrationPopupModel::Position, ORGAN_STRING_NO> pos);
-
-    std::array<mu::engraving::PedalPosition, ORGAN_STRING_NO> getPopupPedalState();
-
-    std::array<Position, ORGAN_STRING_NO> m_pedalState;
 };
 } //namespace mu::notation
 
-#ifndef NO_QT_SUPPORT
-Q_DECLARE_METATYPE(mu::notation::OrganRegistrationPopupModel::Position)
-#endif
+/*
+// Organ
+String m_organName;
+QMap<ManualPedal, StringList> m_organDisposition;
+std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
+StringList m_organPistons;
+
+// Registration
+QMap<ManualPedal, StringList> m_stops;
+std::vector<std::pair<ManualPedal, ManualPedal>> m_couplers;
+StringList m_pistons;
+String m_context;
+*/
 
 #endif // MU_NOTATION_ORGANREGISTRATIONPOPUPMODEL_H

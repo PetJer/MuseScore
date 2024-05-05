@@ -32,11 +32,11 @@ StyledPopupView {
 
     property QtObject model: organRegistrationModel
 
-    property variant pedalState: organRegistrationModel.pedalState
+    property variant stops: organRegistrationModel.stops
 
     property NavigationSection notationViewNavigationSection: null
     property int navigationOrderStart: 0
-    property int navigationOrderEnd: isDiagramNavPanel.order
+    property int navigationOrderEnd: stopsNavPanel.order
 
     contentWidth: menuItems.width
     contentHeight: menuItems.height
@@ -51,7 +51,7 @@ StyledPopupView {
         const marginFromElement = 12
         var popupHeight = root.contentHeight + root.padding * 2
 
-        // Above diagram
+        // Above registration
         let yUp = Math.min(-popupHeight - marginFromElement,
                            (organRegistrationModel.staffPos.y - root.parent.y) - contentHeight - marginFromElement)
         let yDown = Math.max(root.parent.height + marginFromElement,
@@ -74,28 +74,33 @@ StyledPopupView {
         root.y = opensUp ? yUp : yDown
     }
 
-    function checkPedalState(string, state) {
-        return organRegistrationModel.pedalState[string] == state
-    }
+    // function checkStops(string, state) {
+    //     return organRegistrationModel.stops[string] == state // CHANGE!
+    // }
 
-    function updatePedalState(string, state) {
-        root.pedalState[string] = state
-        organRegistrationModel.setDiagramPedalState(root.pedalState)
-    }
+    // function updateStops(string, state) {
+    //     root.stops[string] = state
+    //     organRegistrationModel.setStops(root.stops) // CHANGE!!
+    // }
 
-    function getNoteName(string, state) {
-
-        var noteNames = [
-                [qsTrc("notation", "D flat"), qsTrc("notation", "D natural"), qsTrc("notation", "D sharp")],
-                [qsTrc("notation", "C flat"), qsTrc("notation", "C natural"), qsTrc("notation", "C sharp")],
-                [qsTrc("notation", "B flat"), qsTrc("notation", "B natural"), qsTrc("notation", "B sharp")],
-                [qsTrc("notation", "E flat"), qsTrc("notation", "E natural"), qsTrc("notation", "E sharp")],
-                [qsTrc("notation", "F flat"), qsTrc("notation", "F natural"), qsTrc("notation", "F sharp")],
-                [qsTrc("notation", "G flat"), qsTrc("notation", "G natural"), qsTrc("notation", "G sharp")],
-                [qsTrc("notation", "A flat"), qsTrc("notation", "A natural"), qsTrc("notation", "A sharp")]
+    function getStops() {
+        let stopsModel = []
+        let ids = [
+            iiManual,
+            iManual,
+            ped
         ]
 
-        return noteNames[string][state]
+        let pos = 0
+        for (let manualPedal of root.stops) {
+            for (let [col, stop] of manualPedal.entries()) {
+                // { name: "Copula minor 4", pos: 0, col: 1, btnGroup: iiManual }
+                stopsModel.push({name: stop, pos: pos, col: col+1, btnGroup: ids[pos]})
+            }
+            pos++;
+        }
+
+        return stopsModel
     }
 
     GridLayout {
@@ -105,7 +110,7 @@ StyledPopupView {
         columnSpacing: 10
         rowSpacing: 10
 
-        HarpPedalPopupModel {
+        OrganRegistrationPopupModel {
             id: organRegistrationModel
 
             onItemRectChanged: function(rect) {
@@ -118,204 +123,74 @@ StyledPopupView {
         }
 
         NavigationPanel {
-            id: pedalSettingsNavPanel
-            name: "PedalSettings"
+            id: stopsNavPanel
+            name: "StopsSettings"
             direction: NavigationPanel.Vertical
             section: root.notationViewNavigationSection
             order: root.navigationOrderStart
-            accessible.name: qsTrc("notation", "Pedal settings buttons")
+            // accessible.name: qsTrc("notation", "Stops settings buttons")
         }
 
-        // Accidental symbols
+        // ManualPedals - TODO
         Repeater {
-            model: [IconCode.FLAT, IconCode.NATURAL, IconCode.SHARP]
-            StyledIconLabel {
+            model: ["II", "I", "Ped."]
+            StyledTextLabel {
                 Layout.row: index + 1
                 Layout.leftMargin: 30
                 Layout.preferredWidth: 20
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                iconCode: modelData
-            }
-        }
-
-        // String names
-        Repeater {
-            width: parent.width
-
-            model: [
-                { str: qsTrc("notation", "D"), col: 1 },
-                { str: qsTrc("notation", "C"), col: 2 },
-                { str: qsTrc("notation", "B"), col: 3 },
-                { str: qsTrc("notation", "E"), col: 5 },
-                { str: qsTrc("notation", "F"), col: 6 },
-                { str: qsTrc("notation", "G"), col: 7 },
-                { str: qsTrc("notation", "A"), col: 8 }
-            ]
-
-            StyledTextLabel {
-                Layout.column: modelData.col
-                Layout.row: 0
-                Layout.topMargin: 15
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                Layout.rightMargin: (modelData.col === 8) ? 30 : 0
-
-                font: ui.theme.largeBodyBoldFont
-
-                text: modelData.str
+                text: modelData
             }
         }
 
         ButtonGroup {
-            id: dGroup
+            id: iiManual
         }
 
         ButtonGroup {
-            id: cGroup
+            id: iManual
         }
 
         ButtonGroup {
-            id: bGroup
-        }
-
-        ButtonGroup {
-            id: eGroup
-        }
-
-        ButtonGroup {
-            id: fGroup
-        }
-
-        ButtonGroup {
-            id: gGroup
-        }
-
-        ButtonGroup {
-            id: aGroup
+            id: ped
         }
 
         // Button repeater
         Repeater {
             width: parent.width
 
-            model: [
-                // Strings: 0 1 2 3 4 5 6   Positions: 0    1   2       3
-                //          D C B E F G A              Flat Nat Sharp   Unset
-                { buttonId: "DFlatButton",  stringId: 0, pos: 0, col: 1, btnGroup: dGroup },
-                { buttonId: "DNatButton",   stringId: 0, pos: 1, col: 1, btnGroup: dGroup },
-                { buttonId: "DSharpButton", stringId: 0, pos: 2, col: 1, btnGroup: dGroup },
+            model: getStops()
 
-                { buttonId: "CFlatButton",  stringId: 1, pos: 0, col: 2, btnGroup: cGroup },
-                { buttonId: "CNatButton",   stringId: 1, pos: 1, col: 2, btnGroup: cGroup },
-                { buttonId: "CSharpButton", stringId: 1, pos: 2, col: 2, btnGroup: cGroup },
-
-                { buttonId: "BFlatButton",  stringId: 2, pos: 0, col: 3, btnGroup: bGroup },
-                { buttonId: "BNatButton",   stringId: 2, pos: 1, col: 3, btnGroup: bGroup },
-                { buttonId: "BSharpButton", stringId: 2, pos: 2, col: 3, btnGroup: bGroup },
-
-                { buttonId: "EFlatButton",  stringId: 3, pos: 0, col: 5, btnGroup: eGroup },
-                { buttonId: "ENatButton",   stringId: 3, pos: 1, col: 5, btnGroup: eGroup },
-                { buttonId: "ESharpButton", stringId: 3, pos: 2, col: 5, btnGroup: eGroup },
-
-                { buttonId: "FFlatButton",  stringId: 4, pos: 0, col: 6, btnGroup: fGroup },
-                { buttonId: "FNatButton",   stringId: 4, pos: 1, col: 6, btnGroup: fGroup },
-                { buttonId: "FSharpButton", stringId: 4, pos: 2, col: 6, btnGroup: fGroup },
-
-                { buttonId: "GFlatButton",  stringId: 5, pos: 0, col: 7, btnGroup: gGroup },
-                { buttonId: "GNatButton",   stringId: 5, pos: 1, col: 7, btnGroup: gGroup },
-                { buttonId: "GSharpButton", stringId: 5, pos: 2, col: 7, btnGroup: gGroup },
-
-                { buttonId: "AFlatButton",  stringId: 6, pos: 0, col: 8, btnGroup: aGroup },
-                { buttonId: "ANatButton",   stringId: 6, pos: 1, col: 8, btnGroup: aGroup },
-                { buttonId: "ASharpButton", stringId: 6, pos: 2, col: 8, btnGroup: aGroup },
-
-            ]
-
-            RoundedRadioButton {
+            // Button toggle in the future
+            CheckBox {
                 Layout.row: modelData.pos + 1
                 Layout.column: modelData.col
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 Layout.rightMargin: (modelData.col === 8) ? 30 : 0
 
-                checked: checkPedalState(modelData.stringId, modelData.pos)
+                // checked: checkstops(modelData.stringId, modelData.pos)
                 ButtonGroup.group: modelData.btnGroup
+                text: modelData.name
 
-                navigation.name: getNoteName(modelData.stringId, modelData.pos)
-                navigation.panel: pedalSettingsNavPanel
-                navigation.order: modelData.stringId * 3 + modelData.pos
-                navigation.accessible.name: getNoteName(modelData.stringId, modelData.pos)
+                checked: false
+                onClicked: testing()
 
-                onToggled: updatePedalState(modelData.stringId, modelData.pos)
+                // navigation.name: modelData.name
+                // navigation.panel: stopsNavPanel
+                // navigation.order: modelData.stringId * 3 + modelData.pos
+                // navigation.accessible.name: getNoteName(modelData.stringId, modelData.pos)
+
+                // onToggled: updatestops(modelData.stringId, modelData.pos)
             }
         }
 
-        SeparatorLine {
-            Layout.row: 0
-            Layout.column: 4
-            Layout.rowSpan: 4
-            Layout.leftMargin: 9
-            Layout.rightMargin: 10
-            Layout.topMargin: 15
-
-            orientation: Qt.Vertical
-            Layout.alignment: Qt.AlignCenter
-        }
-
-        // Diagram or text
-
-        NavigationPanel {
-            id: isDiagramNavPanel
-            name: "HarpPedalIsDiagramButtons"
-            section: root.notationViewNavigationSection
-            direction: NavigationPanel.Horizontal
-            order: pedalSettingsNavPanel.order + 1
-            accessible.name: qsTrc("notation", "Diagram type buttons")
-        }
-
-        RoundedRadioButton {
-            id: diagramButton
-            Layout.row: 5
-            Layout.column: 0
-            Layout.columnSpan: 4
-
-            Layout.topMargin: 10
-            Layout.bottomMargin: 15
-            Layout.leftMargin: 30
-            Layout.fillWidth: true
-
-            // checked: model.isDiagram
-            text: qsTrc("notation", "Diagram")
-
-            navigation.name: "diagramButton"
-            navigation.panel: isDiagramNavPanel
-            navigation.order: 1
-            navigation.accessible.name: qsTrc("notation", "Diagram")
-
-            onToggled: {
-                // model.setIsDiagram(true)
-            }
-        }
-
-        RoundedRadioButton {
-            id: textButton
-            Layout.row: 5
-            Layout.column: 4
-            Layout.columnSpan: 4
-
-            Layout.topMargin: 10
-            Layout.bottomMargin: 15
-            Layout.fillWidth: true
-
-            // checked: !model.isDiagram
-            text: qsTrc("notation", "Text")
-
-            navigation.name: "textButton"
-            navigation.panel: isDiagramNavPanel
-            navigation.order: 2
-            navigation.accessible.name: qsTrc("notation", "Text")
-
-            onToggled: {
-                // model.setIsDiagram(false)
-            }
-        }
+        // NavigationPanel {
+        //     id: isRegistrationNavPanel
+        //     name: "Registration"
+        //     section: root.notationViewNavigationSection
+        //     direction: NavigationPanel.Horizontal
+        //     order: stopsNavPanel.order + 1
+        //     // accessible.name: qsTrc("notation", "Diagram type buttons")
+        // }
     }
 }

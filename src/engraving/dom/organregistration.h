@@ -71,14 +71,16 @@ public:
     String accessibleInfo() const override;
     String screenReaderInfo() const override;
 
-    std::map<ManualPedal, StringList> getOrganDisposition() const { return m_organDisposition; }
+    QMap<ManualPedal, StringList> getOrganDisposition() const { return m_organDisposition; }
     std::vector<std::pair<ManualPedal, ManualPedal>> getOrganCouplers() const { return m_organCouplers; }
     StringList getOrganPistons() const { return m_organPistons; }
 
-    std::map<ManualPedal, StringList> getStops() const { return m_stops; }
+    QMap<ManualPedal, QStringList> getStops() const;
     std::vector<std::pair<ManualPedal, ManualPedal>> getCouplers() const { return m_couplers; }
     StringList getPistons() const { return m_pistons; }
     String getContext() const { return m_context; }
+
+    std::array<QStringList, 3> getStopsVector() const;
 
     String createRegistrationText();
     void updateRegistrationText();
@@ -86,12 +88,12 @@ public:
 private:
     // Organ
     String m_organName;
-    std::map<ManualPedal, StringList> m_organDisposition;
+    QMap<ManualPedal, StringList> m_organDisposition;
     std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
     StringList m_organPistons;
 
     // Registration
-    std::map<ManualPedal, StringList> m_stops;
+    QMap<ManualPedal, StringList> m_stops;
     std::vector<std::pair<ManualPedal, ManualPedal>> m_couplers;
     StringList m_pistons;
     String m_context;

@@ -142,7 +142,7 @@ OrganRegistration::OrganRegistration(Segment* parent)
 {
     // Manually creating our own organ as there is no creation process yet
     m_organName = "My Organ";
-    m_organDisposition = std::map<ManualPedal, StringList> {
+    m_organDisposition = QMap<ManualPedal, StringList> {
         {ManualPedal::II, {u"Copula major 8", u"Copula minor 4", u"Gozdna fl. 2"}},
         {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Oktava 4", u"Superoktava 2"}},
         {ManualPedal::PED, {u"Subbas 16", u"Bordon 8"}},
@@ -188,8 +188,8 @@ String OrganRegistration::createRegistrationText()
         registration.append(m_organName);
     }
 
-    for (const auto &s : m_stops) {
-        stops.append(ManualPedalToString(s.first) + u": " + s.second.join(SEPARATOR));
+    for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
+        stops.append(ManualPedalToString(s.key()) + u": " + s.value().join(SEPARATOR));
     }
 
     if (!stops.empty()) {
@@ -227,6 +227,28 @@ void OrganRegistration::updateRegistrationText()
 /*
  * ADD UNDO REGISTRATION FUNCTION
  */
+
+QMap<ManualPedal, QStringList> OrganRegistration::getStops() const
+{
+    QMap<ManualPedal, QStringList> stopsMap;
+    for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
+        stopsMap[s.key()] = s.value().toQStringList();
+    }
+
+    return stopsMap;
+}
+
+std::array<QStringList, 3> OrganRegistration::getStopsVector() const
+{
+    std::array<QStringList, 3> stopsVector;
+    int index = 0;
+    for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
+        stopsVector[index] = s.value().toQStringList();
+        index++;
+    }
+
+    return stopsVector;
+}
 
 // Surely you can get this values from styledef... Hardcoded for now
 PropertyValue OrganRegistration::getProperty(Pid propertyId) const
@@ -271,7 +293,6 @@ bool OrganRegistration::setProperty(Pid propertyId, const PropertyValue& v)
         setPaddingWidth(Spatium(1.0));
         break;
     default:
-        qDebug("setpropetry");
         if (!TextBase::setProperty(propertyId, v)) {
             return false;
         }

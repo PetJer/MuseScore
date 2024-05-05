@@ -43,66 +43,43 @@ void OrganRegistrationPopupModel::init()
 
 void OrganRegistrationPopupModel::load()
 {
-    // setPopupPedalState(diagram->getPedalState());
-    // emit pedalStateChanged(pedalState());
+    mu::engraving::OrganRegistration* registration = m_item && m_item->isOrganRegistration() ? toOrganRegistration(m_item) : nullptr;
+    if (!registration) {
+        return;
+    }
+
+    setPopupStops(registration->getStopsVector());
+    emit stopsChanged(stops());
     return;
 }
 
-std::array<mu::engraving::PedalPosition, ORGAN_STRING_NO> OrganRegistrationPopupModel::getPopupPedalState()
+void OrganRegistrationPopupModel::setPopupStops(std::array<QStringList, 3> stops)
 {
-    std::array<mu::engraving::PedalPosition, ORGAN_STRING_NO> posArr;
-    for (int i = 0; i < ORGAN_STRING_NO; i++) {
-        switch (m_pedalState.at(i)) {
-        case OrganRegistrationPopupModel::Position::FLAT:
-            posArr[i] = mu::engraving::PedalPosition::FLAT;
-            break;
-        case OrganRegistrationPopupModel::Position::NATURAL:
-            posArr[i] = mu::engraving::PedalPosition::NATURAL;
-            break;
-        case OrganRegistrationPopupModel::Position::SHARP:
-            posArr[i] = mu::engraving::PedalPosition::SHARP;
-            break;
-        case OrganRegistrationPopupModel::Position::UNSET:
-            posArr[i] = mu::engraving::PedalPosition::UNSET;
-            break;
-        default:
-            posArr[i] = mu::engraving::PedalPosition::UNSET;
-            break;
-        }
-    }
-
-    return posArr;
+    m_stops = stops;
 }
 
-void OrganRegistrationPopupModel::setPopupPedalState(std::array<OrganRegistrationPopupModel::Position, ORGAN_STRING_NO> pos)
+QVector<QStringList> OrganRegistrationPopupModel::stops() const
 {
-    m_pedalState = pos;
+    return QVector<QStringList>(m_stops.begin(), m_stops.end());
 }
 
-void OrganRegistrationPopupModel::setPopupPedalState(std::array<mu::engraving::PedalPosition, ORGAN_STRING_NO> pos)
+void OrganRegistrationPopupModel::setStops(QVector<QStringList> stops)
 {
-    std::array<OrganRegistrationPopupModel::Position, ORGAN_STRING_NO> posArr;
-    for (int i = 0; i < ORGAN_STRING_NO; i++) {
-        switch (pos.at(i)) {
-        case mu::engraving::PedalPosition::FLAT:
-            posArr[i] = OrganRegistrationPopupModel::Position::FLAT;
-            break;
-        case mu::engraving::PedalPosition::NATURAL:
-            posArr[i] = OrganRegistrationPopupModel::Position::NATURAL;
-            break;
-        case mu::engraving::PedalPosition::SHARP:
-            posArr[i] = OrganRegistrationPopupModel::Position::SHARP;
-            break;
-        case mu::engraving::PedalPosition::UNSET:
-            posArr[i] = OrganRegistrationPopupModel::Position::UNSET;
-            break;
-        default:
-            posArr[i] = OrganRegistrationPopupModel::Position::UNSET;
-            break;
-        }
+    std::array<QStringList, 3> stdStops;
+    for (int i = 0; i < 3; i++) {
+        stdStops[i] = stops.at(i);
     }
 
-    m_pedalState = posArr;
+    if (stdStops == m_stops) {
+        return;
+    }
+
+    beginCommand();
+    setPopupStops(stdStops);
+    // toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
+    updateNotation();
+    endCommand();
+    emit stopsChanged(stops);
 }
 
 QRectF OrganRegistrationPopupModel::staffPos() const
@@ -132,28 +109,4 @@ QRectF OrganRegistrationPopupModel::staffPos() const
     }
 
     return QRectF();
-}
-
-QVector<OrganRegistrationPopupModel::Position> OrganRegistrationPopupModel::pedalState() const
-{
-    return QVector<OrganRegistrationPopupModel::Position>(m_pedalState.begin(), m_pedalState.end());
-}
-
-void OrganRegistrationPopupModel::setDiagramPedalState(QVector<Position> pedalState)
-{
-    std::array<OrganRegistrationPopupModel::Position, ORGAN_STRING_NO> stdPedalState;
-    for (int i = 0; i < ORGAN_STRING_NO; i++) {
-        stdPedalState[i] = pedalState.at(i);
-    }
-
-    if (stdPedalState == m_pedalState) {
-        return;
-    }
-
-    beginCommand();
-    setPopupPedalState(stdPedalState);
-    // engraving::toOrganRegistration(m_item)->undoChangePedalState(getPopupPedalState());
-    updateNotation();
-    endCommand();
-    emit pedalStateChanged(pedalState);
 }
