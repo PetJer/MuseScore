@@ -48,9 +48,24 @@ void OrganRegistrationPopupModel::load()
         return;
     }
 
-    setPopupStops(registration->getStopsVector());
+    setPopupOrganName(registration->getOrganName());
+    emit organNameChanged(organName());
+
+    setPopupOrganDisposition(registration->getOrganDisposition());
+    emit organDispositionChanged(organDisposition());
+
+    setPopupStops(registration->getStops());
     emit stopsChanged(stops());
     return;
+}
+
+void OrganRegistrationPopupModel::setPopupOrganName(std::string organName)
+{
+    m_organName = organName;
+}
+void OrganRegistrationPopupModel::setPopupOrganDisposition(std::array<QStringList, engraving::MANUAL_PEDAL_NO> organDisposition)
+{
+    m_organDisposition = organDisposition;
 }
 
 void OrganRegistrationPopupModel::setPopupStops(std::array<QStringList, 3> stops)
@@ -58,9 +73,55 @@ void OrganRegistrationPopupModel::setPopupStops(std::array<QStringList, 3> stops
     m_stops = stops;
 }
 
+
+QString OrganRegistrationPopupModel::organName() const
+{
+    return QString::fromStdString(m_organName);
+}
+
+QVector<QStringList> OrganRegistrationPopupModel::organDisposition() const
+{
+    return QVector<QStringList>(m_organDisposition.begin(), m_organDisposition.end());
+}
+
 QVector<QStringList> OrganRegistrationPopupModel::stops() const
 {
     return QVector<QStringList>(m_stops.begin(), m_stops.end());
+}
+
+void OrganRegistrationPopupModel::setOrganName(QString organName)
+{
+    std::string stdOrganName;
+    stdOrganName = organName.toStdString();
+
+    if (stdOrganName == m_organName) {
+        return;
+    }
+
+    beginCommand();
+    setPopupOrganName(stdOrganName);
+    // toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
+    updateNotation();
+    endCommand();
+    emit organNameChanged(organName);
+}
+
+void OrganRegistrationPopupModel::setOrganDisposition(QVector<QStringList> organDisposition)
+{
+    std::array<QStringList, engraving::MANUAL_PEDAL_NO> stdOrganDisposition;
+    for (int i = 0; i < engraving::MANUAL_PEDAL_NO; i++) {
+        stdOrganDisposition[i] = organDisposition.at(i);
+    }
+
+    if (stdOrganDisposition == m_organDisposition) {
+        return;
+    }
+
+    beginCommand();
+    setPopupOrganDisposition(stdOrganDisposition);
+    updateNotation();
+    endCommand();
+    emit organDispositionChanged(organDisposition);
 }
 
 void OrganRegistrationPopupModel::setStops(QVector<QStringList> stops)
@@ -76,7 +137,6 @@ void OrganRegistrationPopupModel::setStops(QVector<QStringList> stops)
 
     beginCommand();
     setPopupStops(stdStops);
-    // toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
     updateNotation();
     endCommand();
     emit stopsChanged(stops);

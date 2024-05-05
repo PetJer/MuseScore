@@ -32,6 +32,8 @@ StyledPopupView {
 
     property QtObject model: organRegistrationModel
 
+    property string organName: organRegistrationModel.organName
+    property variant organDisposition: organRegistrationModel.organDisposition
     property variant stops: organRegistrationModel.stops
 
     property NavigationSection notationViewNavigationSection: null
@@ -83,8 +85,8 @@ StyledPopupView {
     //     organRegistrationModel.setStops(root.stops) // CHANGE!!
     // }
 
-    function getStops() {
-        let stopsModel = []
+    function getOrganDisposition() {
+        let organDispositionModel = []
         let ids = [
             iiManual,
             iManual,
@@ -92,15 +94,15 @@ StyledPopupView {
         ]
 
         let pos = 0
-        for (let manualPedal of root.stops) {
+        for (let manualPedal of root.organDisposition) {
             for (let [col, stop] of manualPedal.entries()) {
                 // { name: "Copula minor 4", pos: 0, col: 1, btnGroup: iiManual }
-                stopsModel.push({name: stop, pos: pos, col: col+1, btnGroup: ids[pos]})
+                organDispositionModel.push({name: stop, pos: pos, col: col+1, btnGroup: ids[pos]})
             }
             pos++;
         }
 
-        return stopsModel
+        return organDispositionModel
     }
 
     GridLayout {
@@ -159,7 +161,7 @@ StyledPopupView {
         Repeater {
             width: parent.width
 
-            model: getStops()
+            model: getOrganDisposition()
 
             // Button toggle in the future
             CheckBox {
@@ -183,14 +185,5 @@ StyledPopupView {
                 // onToggled: updatestops(modelData.stringId, modelData.pos)
             }
         }
-
-        // NavigationPanel {
-        //     id: isRegistrationNavPanel
-        //     name: "Registration"
-        //     section: root.notationViewNavigationSection
-        //     direction: NavigationPanel.Horizontal
-        //     order: stopsNavPanel.order + 1
-        //     // accessible.name: qsTrc("notation", "Diagram type buttons")
-        // }
     }
 }

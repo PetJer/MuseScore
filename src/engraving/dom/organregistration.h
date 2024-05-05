@@ -46,6 +46,7 @@ enum class NamingConvention : char {
 };
 
 static constexpr int MANUALS_NO = 6;
+static constexpr int MANUAL_PEDAL_NO = 7;
 // Will be a setting. Leaving it here for now
 static const String SEPARATOR = u", ";
 
@@ -71,16 +72,17 @@ public:
     String accessibleInfo() const override;
     String screenReaderInfo() const override;
 
-    QMap<ManualPedal, StringList> getOrganDisposition() const { return m_organDisposition; }
+    std::string getOrganName() const;
+    std::array<QStringList, MANUAL_PEDAL_NO> getOrganDisposition() const;
     std::vector<std::pair<ManualPedal, ManualPedal>> getOrganCouplers() const { return m_organCouplers; }
     StringList getOrganPistons() const { return m_organPistons; }
 
-    QMap<ManualPedal, QStringList> getStops() const;
+    std::array<QStringList, 3> getStops() const;
     std::vector<std::pair<ManualPedal, ManualPedal>> getCouplers() const { return m_couplers; }
     StringList getPistons() const { return m_pistons; }
     String getContext() const { return m_context; }
 
-    std::array<QStringList, 3> getStopsVector() const;
+    QVector<ManualPedal> getManualPedals() const { return m_organDisposition.keys(); }
 
     String createRegistrationText();
     void updateRegistrationText();

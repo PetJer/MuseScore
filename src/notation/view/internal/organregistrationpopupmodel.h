@@ -38,8 +38,13 @@ class OrganRegistrationPopupModel : public AbstractElementPopupModel
 
     INJECT(context::IGlobalContext, globalContext)
 
+    Q_PROPERTY(QString organName READ organName WRITE setOrganName NOTIFY organNameChanged)
     Q_PROPERTY(
-        QVector<QStringList> stops READ stops WRITE setStops NOTIFY stopsChanged)
+        QVector<QStringList> organDisposition READ organDisposition WRITE setOrganDisposition NOTIFY organDispositionChanged
+    )
+
+    Q_PROPERTY(QVector<QStringList> stops READ stops WRITE setStops NOTIFY stopsChanged)
+
     Q_PROPERTY(QRectF staffPos READ staffPos CONSTANT)
 
 public:
@@ -47,19 +52,38 @@ public:
 
     QRectF staffPos() const;
 
+    QString organName() const;
+    QVector<QStringList> organDisposition() const;
+
     QVector<QStringList> stops() const;
 
     Q_INVOKABLE void init() override;
 
 public slots:
+    void setOrganName(QString organName);
+    void setOrganDisposition(QVector<QStringList> organDisposition);
+
     void setStops(QVector<QStringList> stops);
 
 signals:
+    void organNameChanged(QString organName);
+    void organDispositionChanged(QVector<QStringList> organDisposition);
+
     void stopsChanged(QVector<QStringList> stops);
 
 private:
     void load();
 
+    // Organ
+    void setPopupOrganName(std::string organName);
+    std::string m_organName;
+
+    void setPopupOrganDisposition(std::array<QStringList, engraving::MANUAL_PEDAL_NO>);
+    std::array<QStringList, engraving::MANUAL_PEDAL_NO> m_organDisposition;
+    // std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
+    // QStringList m_organPistons;
+
+    // Registration
     void setPopupStops(std::array<QStringList, 3> stops);
     std::array<QStringList, 3> m_stops;
 

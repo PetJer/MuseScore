@@ -157,7 +157,11 @@ OrganRegistration::OrganRegistration(Segment* parent)
     };
 
     // For testing
-    m_stops = m_organDisposition;
+    m_stops = QMap<ManualPedal, StringList> {
+        {ManualPedal::II, {u"Copula major 8", u"Copula minor 4"}},
+        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Superoktava 2"}},
+        {ManualPedal::PED, {u"Subbas 16"}},
+    };
     m_couplers = m_organCouplers;
     m_pistons = m_organPistons;
     m_context = "Open Swell";
@@ -228,26 +232,33 @@ void OrganRegistration::updateRegistrationText()
  * ADD UNDO REGISTRATION FUNCTION
  */
 
-QMap<ManualPedal, QStringList> OrganRegistration::getStops() const
+std::string OrganRegistration::getOrganName() const
 {
-    QMap<ManualPedal, QStringList> stopsMap;
-    for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
-        stopsMap[s.key()] = s.value().toQStringList();
-    }
-
-    return stopsMap;
+    return m_organName.toStdString();
 }
 
-std::array<QStringList, 3> OrganRegistration::getStopsVector() const
+std::array<QStringList, 3> OrganRegistration::getStops() const
 {
-    std::array<QStringList, 3> stopsVector;
+    std::array<QStringList, 3> stops;
     int index = 0;
     for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
-        stopsVector[index] = s.value().toQStringList();
+        stops[index] = s.value().toQStringList();
         index++;
     }
 
-    return stopsVector;
+    return stops;
+}
+
+std::array<QStringList, MANUAL_PEDAL_NO> OrganRegistration::getOrganDisposition() const
+{
+    std::array<QStringList, MANUAL_PEDAL_NO> disposition;
+    int index = 0;
+    for (auto s = m_organDisposition.cbegin(); s != m_organDisposition.cend(); ++s) {
+        disposition[index] = s.value().toQStringList();
+        index++;
+    }
+
+    return disposition;
 }
 
 // Surely you can get this values from styledef... Hardcoded for now
