@@ -59,16 +59,18 @@ void OrganRegistrationPopupModel::load()
     return;
 }
 
+
 void OrganRegistrationPopupModel::setPopupOrganName(std::string organName)
 {
     m_organName = organName;
 }
+
 void OrganRegistrationPopupModel::setPopupOrganDisposition(std::array<QStringList, engraving::MANUAL_PEDAL_NO> organDisposition)
 {
     m_organDisposition = organDisposition;
 }
 
-void OrganRegistrationPopupModel::setPopupStops(std::array<QStringList, 3> stops)
+void OrganRegistrationPopupModel::setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops)
 {
     m_stops = stops;
 }
@@ -84,10 +86,11 @@ QVector<QStringList> OrganRegistrationPopupModel::organDisposition() const
     return QVector<QStringList>(m_organDisposition.begin(), m_organDisposition.end());
 }
 
-QVector<QStringList> OrganRegistrationPopupModel::stops() const
+QVector<QVector<bool>> OrganRegistrationPopupModel::stops() const
 {
-    return QVector<QStringList>(m_stops.begin(), m_stops.end());
+    return QVector<QVector<bool>>(m_stops.begin(), m_stops.end());
 }
+
 
 void OrganRegistrationPopupModel::setOrganName(QString organName)
 {
@@ -124,10 +127,10 @@ void OrganRegistrationPopupModel::setOrganDisposition(QVector<QStringList> organ
     emit organDispositionChanged(organDisposition);
 }
 
-void OrganRegistrationPopupModel::setStops(QVector<QStringList> stops)
+void OrganRegistrationPopupModel::setStops(QVector<QVector<bool>> stops)
 {
-    std::array<QStringList, 3> stdStops;
-    for (int i = 0; i < 3; i++) {
+    std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stdStops;
+    for (int i = 0; i < engraving::MANUAL_PEDAL_NO; i++) {
         stdStops[i] = stops.at(i);
     }
 

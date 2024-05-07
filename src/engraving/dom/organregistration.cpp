@@ -48,7 +48,8 @@ using namespace mu::engraving;
  * - are the names below even correct (from IV to VI)?
  * - Do pedal names change too?
  */
-const std::array<String, MANUALS_NO> NAMING_NUMBER = {
+const std::array<String, MANUAL_PEDAL_NO> NAMING_NUMBER = {
+    u"Pedal",
     u"I",
     u"II",
     u"III",
@@ -57,7 +58,8 @@ const std::array<String, MANUALS_NO> NAMING_NUMBER = {
     u"VI",
 };
 
-const std::array<String, MANUALS_NO> NAMING_ENGLISH = {
+const std::array<String, MANUAL_PEDAL_NO> NAMING_ENGLISH = {
+    u"Pedal",
     u"Great",
     u"Swell",
     u"Choir",
@@ -66,7 +68,8 @@ const std::array<String, MANUALS_NO> NAMING_ENGLISH = {
     u"Antiphonal",
 };
 
-const std::array<String, MANUALS_NO> NAMING_GERMAN = {
+const std::array<String, MANUAL_PEDAL_NO> NAMING_GERMAN = {
+    u"Pedal",
     u"Hauptwerk",
     u"Schwellwerk",
     u"Rückpositiv",
@@ -75,7 +78,8 @@ const std::array<String, MANUALS_NO> NAMING_GERMAN = {
     u"",
 };
 
-const std::array<String, MANUALS_NO> NAMING_FRENCH = {
+const std::array<String, MANUAL_PEDAL_NO> NAMING_FRENCH = {
+    u"Pedal",
     u"Grand Orgue",
     u"Positif",
     u"Grand Choeur",
@@ -84,7 +88,7 @@ const std::array<String, MANUALS_NO> NAMING_FRENCH = {
     u"",
 };
 
-static const std::array<String, MANUALS_NO> ManualNamingConvention(NamingConvention namingConvention)
+static const std::array<String, MANUAL_PEDAL_NO> ManualNamingConvention(NamingConvention namingConvention)
 {
     switch(namingConvention) {
     case NamingConvention::NUMBER:
@@ -103,24 +107,23 @@ static const std::array<String, MANUALS_NO> ManualNamingConvention(NamingConvent
 static const String ManualPedalToString(ManualPedal manualPedal)
 {
     // There will be a setting as a parameter. Hardcoded for now
-    std::array<String, MANUALS_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::FRENCH);
+    std::array<String, MANUAL_PEDAL_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::NUMBER);
 
     switch(manualPedal) {
-    case ManualPedal::VI:
-        return manualNamingConvention[5];
-    case ManualPedal::V:
-        return manualNamingConvention[4];
-    case ManualPedal::IV:
-        return manualNamingConvention[3];
-    case ManualPedal::III:
-        return manualNamingConvention[2];
-    case ManualPedal::II:
-        return manualNamingConvention[1];
-    case ManualPedal::I:
-        return manualNamingConvention[0];
     case ManualPedal::PED:
-        // Should change based on preference for short or long names
-        return String(u"Ped.");
+        return manualNamingConvention[0];
+    case ManualPedal::I:
+        return manualNamingConvention[1];
+    case ManualPedal::II:
+        return manualNamingConvention[2];
+    case ManualPedal::III:
+        return manualNamingConvention[3];
+    case ManualPedal::IV:
+        return manualNamingConvention[4];
+    case ManualPedal::V:
+        return manualNamingConvention[5];
+    case ManualPedal::VI:
+        return manualNamingConvention[6];
     }
 
     return String();
@@ -143,9 +146,9 @@ OrganRegistration::OrganRegistration(Segment* parent)
     // Manually creating our own organ as there is no creation process yet
     m_organName = "My Organ";
     m_organDisposition = QMap<ManualPedal, StringList> {
-        {ManualPedal::II, {u"Copula major 8", u"Copula minor 4", u"Gozdna fl. 2"}},
-        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Oktava 4", u"Superoktava 2"}},
         {ManualPedal::PED, {u"Subbas 16", u"Bordon 8"}},
+        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Oktava 4", u"Superoktava 2"}},
+        {ManualPedal::II, {u"Copula major 8", u"Copula minor 4", u"Gozdna fl. 2"}},
     };
     m_organCouplers = std::vector<std::pair<ManualPedal, ManualPedal>> {
         {ManualPedal::II, ManualPedal::I},
@@ -157,11 +160,12 @@ OrganRegistration::OrganRegistration(Segment* parent)
     };
 
     // For testing
-    m_stops = QMap<ManualPedal, StringList> {
-        {ManualPedal::II, {u"Copula major 8", u"Copula minor 4"}},
-        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Superoktava 2"}},
-        {ManualPedal::PED, {u"Subbas 16"}},
+    m_stops = QMap<ManualPedal, QVector<bool>> {
+        {ManualPedal::PED, {false, true}},
+        {ManualPedal::I, {true, false, true, false}},
+        {ManualPedal::II, {true, false, true}},
     };
+
     m_couplers = m_organCouplers;
     m_pistons = m_organPistons;
     m_context = "Open Swell";
@@ -192,8 +196,14 @@ String OrganRegistration::createRegistrationText()
         registration.append(m_organName);
     }
 
-    for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
-        stops.append(ManualPedalToString(s.key()) + u": " + s.value().join(SEPARATOR));
+    for (auto mp = m_stops.cbegin(); mp != m_stops.cend(); mp++) {
+        StringList _stops;
+        for (int i = 0; i < m_stops[mp.key()].size(); i++) {
+            if (m_stops[mp.key()][i] == true) {
+                _stops.append(m_organDisposition[mp.key()][i]);
+            }
+        }
+        stops.append(ManualPedalToString(mp.key()) + u": " + _stops.join(SEPARATOR));
     }
 
     if (!stops.empty()) {
@@ -237,13 +247,11 @@ std::string OrganRegistration::getOrganName() const
     return m_organName.toStdString();
 }
 
-std::array<QStringList, 3> OrganRegistration::getStops() const
+std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getStops() const
 {
-    std::array<QStringList, 3> stops;
-    int index = 0;
+    std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops;
     for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {
-        stops[index] = s.value().toQStringList();
-        index++;
+        stops[static_cast<int>(s.key())] = s.value();
     }
 
     return stops;
@@ -252,10 +260,8 @@ std::array<QStringList, 3> OrganRegistration::getStops() const
 std::array<QStringList, MANUAL_PEDAL_NO> OrganRegistration::getOrganDisposition() const
 {
     std::array<QStringList, MANUAL_PEDAL_NO> disposition;
-    int index = 0;
     for (auto s = m_organDisposition.cbegin(); s != m_organDisposition.cend(); ++s) {
-        disposition[index] = s.value().toQStringList();
-        index++;
+        disposition[static_cast<int>(s.key())] = s.value().toQStringList();
     }
 
     return disposition;

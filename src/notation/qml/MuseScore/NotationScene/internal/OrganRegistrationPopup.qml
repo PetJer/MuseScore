@@ -102,6 +102,9 @@ StyledPopupView {
             pos++;
         }
 
+        console.log(root.organDisposition);
+        console.log(root.stops);
+
         return organDispositionModel
     }
 
