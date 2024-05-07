@@ -54,9 +54,22 @@ void OrganRegistrationPopupModel::load()
     setPopupOrganDisposition(registration->getOrganDisposition());
     emit organDispositionChanged(organDisposition());
 
-    setPopupStops(registration->getStops());
+    setPopupStops(registration->getArrayStops());
     emit stopsChanged(stops());
     return;
+}
+
+
+QMap<mu::engraving::ManualPedal, QVector<bool>> OrganRegistrationPopupModel::getPopupStops()
+{
+    QMap<mu::engraving::ManualPedal, QVector<bool>> mapStops;
+    for (size_t i = 0; i < engraving::MANUAL_PEDAL_NO; i++) {
+        if (!m_stops[i].empty()) {
+            mapStops[mu::engraving::ManualPedal(i)] = m_stops[i];
+        }
+    }
+
+    return mapStops;
 }
 
 
@@ -140,6 +153,7 @@ void OrganRegistrationPopupModel::setStops(QVector<QVector<bool>> stops)
 
     beginCommand();
     setPopupStops(stdStops);
+    toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
     updateNotation();
     endCommand();
     emit stopsChanged(stops);

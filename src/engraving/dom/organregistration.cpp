@@ -28,6 +28,8 @@
 #include "score.h"
 #include "segment.h"
 
+#include "undo.h"
+
 using namespace mu;
 using namespace mu::engraving;
 
@@ -238,16 +240,36 @@ void OrganRegistration::updateRegistrationText()
     undoChangeProperty(Pid::TEXT, createRegistrationText(), PropertyFlags::STYLED);
 }
 
-/*
- * ADD UNDO REGISTRATION FUNCTION
- */
+void OrganRegistration::undoChangeStops(QMap<ManualPedal, QVector<bool>> _stops)
+{
+    const std::list<EngravingObject*> links = linkList();
+    for (EngravingObject* obj : links) {
+        if (!obj || !obj->isOrganRegistration()) {
+            continue;
+        }
+
+        OrganRegistration* item = toOrganRegistration(obj);
+        Score* linkedScore = item->score();
+        if (!linkedScore) {
+            continue;
+        }
+
+        linkedScore->undo(new ChangeOrganRegistration(item, _stops));
+    }
+}
+
+void OrganRegistration::setStops(QMap<ManualPedal, QVector<bool>> stops)
+{
+    m_stops = stops;
+}
+
 
 std::string OrganRegistration::getOrganName() const
 {
     return m_organName.toStdString();
 }
 
-std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getStops() const
+std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getArrayStops() const
 {
     std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops;
     for (auto s = m_stops.cbegin(); s != m_stops.cend(); ++s) {

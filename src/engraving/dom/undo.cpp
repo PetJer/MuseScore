@@ -3201,9 +3201,35 @@ std::vector<const EngravingObject*> ChangeSingleHarpPedal::objectItems() const
 //   OrganRegistration
 //---------------------------------------------------------
 
-/*
- * TODO options
-*/
+void ChangeOrganRegistration::flip(EditData*)
+{
+     QMap<ManualPedal, QVector<bool>> f_stops = organRegistration->getStops();
+    if (f_stops == stops) {
+        return;
+    }
+
+    organRegistration->setStops(stops);
+    stops = f_stops;
+
+    organRegistration->triggerLayout();
+}
+
+std::vector<const EngravingObject*> ChangeOrganRegistration::objectItems() const
+{
+    Part* part = organRegistration->part();
+    std::vector<const EngravingObject*> objs{ organRegistration };
+    if (!part) {
+        return objs;
+    }
+
+    OrganRegistration* nextOrganRegistration = part->nextOrganRegistration(organRegistration->tick());
+    if (nextOrganRegistration) {
+        objs.push_back(nextOrganRegistration);
+    } else {
+        objs.push_back(organRegistration->score()->lastElement());
+    }
+    return objs;
+}
 
 }
 

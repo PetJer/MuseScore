@@ -1643,9 +1643,22 @@ public:
 //   OrganRegistration
 //---------------------------------------------------------
 
-/*
- * TODO options
-*/
+class ChangeOrganRegistration : public UndoCommand
+{
+    OBJECT_ALLOCATOR(engraving, ChangeOrganRegistration)
+    OrganRegistration* organRegistration;
+    QMap<ManualPedal, QVector<bool>> stops;
+
+    void flip(EditData*) override;
+
+public:
+    ChangeOrganRegistration(OrganRegistration* _organRegistration, QMap<ManualPedal, QVector<bool>> _stops)
+        : organRegistration(_organRegistration), stops(_stops) {}
+
+    UNDO_NAME("ChangeOrganRegistration")
+    //    UNDO_CHANGED_OBJECTS({ organRegistration })
+    std::vector<const EngravingObject*> objectItems() const override;
+};
 
 class ChangeStringData : public UndoCommand
 {

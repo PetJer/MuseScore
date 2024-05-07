@@ -80,10 +80,10 @@ StyledPopupView {
     //     return organRegistrationModel.stops[string] == state // CHANGE!
     // }
 
-    // function updateStops(string, state) {
-    //     root.stops[string] = state
-    //     organRegistrationModel.setStops(root.stops) // CHANGE!!
-    // }
+    function updateStops(pos, col) {
+        root.stops[pos][col] = !root.stops[pos][col]
+        organRegistrationModel.setStops(root.stops)
+    }
 
     function getOrganDisposition() {
         let organDispositionModel = []
@@ -97,7 +97,9 @@ StyledPopupView {
         for (let manualPedal of root.organDisposition) {
             for (let [col, stop] of manualPedal.entries()) {
                 // { name: "Copula minor 4", pos: 0, col: 1, btnGroup: iiManual }
-                organDispositionModel.push({name: stop, pos: pos, col: col+1, btnGroup: ids[pos]})
+                organDispositionModel.push(
+                    {name: stop, pos: pos, col: col, btnGroup: ids[pos], checked: root.stops[pos][col]}
+                )
             }
             pos++;
         }
@@ -169,7 +171,7 @@ StyledPopupView {
             // Button toggle in the future
             CheckBox {
                 Layout.row: modelData.pos + 1
-                Layout.column: modelData.col
+                Layout.column: modelData.col + 1
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 Layout.rightMargin: (modelData.col === 8) ? 30 : 0
 
@@ -177,8 +179,9 @@ StyledPopupView {
                 ButtonGroup.group: modelData.btnGroup
                 text: modelData.name
 
-                checked: false
-                onClicked: testing()
+                checked: modelData.checked
+                onClicked: updateStops(modelData.pos, modelData.col)
+
 
                 // navigation.name: modelData.name
                 // navigation.panel: stopsNavPanel

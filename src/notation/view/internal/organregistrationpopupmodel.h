@@ -85,6 +85,7 @@ private:
 
     // Registration
     void setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops);
+    QMap<mu::engraving::ManualPedal, QVector<bool>> getPopupStops();
     std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> m_stops;
 
 };
