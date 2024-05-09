@@ -33,15 +33,16 @@ StyledPopupView {
     property QtObject model: organRegistrationModel
 
     property string organName: organRegistrationModel.organName
+    property variant manualPedals: organRegistrationModel.manualPedals
     property variant organDisposition: organRegistrationModel.organDisposition
     property variant stops: organRegistrationModel.stops
 
     property NavigationSection notationViewNavigationSection: null
     property int navigationOrderStart: 0
-    property int navigationOrderEnd: stopsNavPanel.order
+    property int navigationOrderEnd: registrationNavPanel.order
 
-    contentWidth: menuItems.width
-    contentHeight: menuItems.height
+    contentWidth: consoleItems.width
+    contentHeight: consoleItems.height
 
     margins: 0
 
@@ -76,10 +77,6 @@ StyledPopupView {
         root.y = opensUp ? yUp : yDown
     }
 
-    // function checkStops(string, state) {
-    //     return organRegistrationModel.stops[string] == state // CHANGE!
-    // }
-
     function updateStops(pos, col) {
         root.stops[pos][col] = !root.stops[pos][col]
         organRegistrationModel.setStops(root.stops)
@@ -88,6 +85,10 @@ StyledPopupView {
     function getOrganDisposition() {
         let organDispositionModel = []
         let ids = [
+            viManual,
+            vManual,
+            ivManual,
+            iiiManual,
             iiManual,
             iManual,
             ped
@@ -104,14 +105,11 @@ StyledPopupView {
             pos++;
         }
 
-        console.log(root.organDisposition);
-        console.log(root.stops);
-
         return organDispositionModel
     }
 
     GridLayout {
-        id: menuItems
+        id: consoleItems
         rows: 5
         flow: GridLayout.TopToBottom
         columnSpacing: 10
@@ -130,24 +128,48 @@ StyledPopupView {
         }
 
         NavigationPanel {
-            id: stopsNavPanel
-            name: "StopsSettings"
+            id: registrationNavPanel
+            name: "registrationSettings"
             direction: NavigationPanel.Vertical
             section: root.notationViewNavigationSection
             order: root.navigationOrderStart
             // accessible.name: qsTrc("notation", "Stops settings buttons")
         }
 
-        // ManualPedals - TODO
+        StyledTextLabel {
+            id: organName
+
+            Layout.leftMargin: 10
+            Layout.topMargin: 10
+
+            font: ui.theme.bodyBoldFont
+            text: root.organName
+        }
+
         Repeater {
-            model: ["II", "I", "Ped."]
+            model: root.manualPedals
             StyledTextLabel {
                 Layout.row: index + 1
-                Layout.leftMargin: 30
-                Layout.preferredWidth: 20
+                Layout.leftMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 text: modelData
             }
+        }
+
+        ButtonGroup {
+            id: viManual
+        }
+
+        ButtonGroup {
+            id: vManual
+        }
+
+        ButtonGroup {
+            id: ivManual
+        }
+
+        ButtonGroup {
+            id: iiiManual
         }
 
         ButtonGroup {
@@ -162,7 +184,6 @@ StyledPopupView {
             id: ped
         }
 
-        // Button repeater
         Repeater {
             width: parent.width
 
@@ -173,22 +194,13 @@ StyledPopupView {
                 Layout.row: modelData.pos + 1
                 Layout.column: modelData.col + 1
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                Layout.rightMargin: (modelData.col === 8) ? 30 : 0
+                // Layout.rightMargin: (modelData.col === 8) ? 30 : 0
 
-                // checked: checkstops(modelData.stringId, modelData.pos)
                 ButtonGroup.group: modelData.btnGroup
                 text: modelData.name
 
                 checked: modelData.checked
                 onClicked: updateStops(modelData.pos, modelData.col)
-
-
-                // navigation.name: modelData.name
-                // navigation.panel: stopsNavPanel
-                // navigation.order: modelData.stringId * 3 + modelData.pos
-                // navigation.accessible.name: getNoteName(modelData.stringId, modelData.pos)
-
-                // onToggled: updatestops(modelData.stringId, modelData.pos)
             }
         }
     }

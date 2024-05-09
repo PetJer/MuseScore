@@ -48,11 +48,15 @@ void OrganRegistrationPopupModel::load()
         return;
     }
 
-    setPopupOrganName(registration->getOrganName());
+    m_organName = registration->getOrganName();
     emit organNameChanged(organName());
 
-    setPopupOrganDisposition(registration->getOrganDisposition());
+    m_organDisposition = registration->getOrganDisposition();
     emit organDispositionChanged(organDisposition());
+
+    m_manualPedals = registration->getManualPedals();
+    emit manualPedalsChanged(manualPedals());
+
 
     setPopupStops(registration->getArrayStops());
     emit stopsChanged(stops());
@@ -72,27 +76,11 @@ QMap<mu::engraving::ManualPedal, QVector<bool>> OrganRegistrationPopupModel::get
     return mapStops;
 }
 
-
-void OrganRegistrationPopupModel::setPopupOrganName(std::string organName)
-{
-    m_organName = organName;
-}
-
-void OrganRegistrationPopupModel::setPopupOrganDisposition(std::array<QStringList, engraving::MANUAL_PEDAL_NO> organDisposition)
-{
-    m_organDisposition = organDisposition;
-}
-
 void OrganRegistrationPopupModel::setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops)
 {
     m_stops = stops;
 }
 
-
-QString OrganRegistrationPopupModel::organName() const
-{
-    return QString::fromStdString(m_organName);
-}
 
 QVector<QStringList> OrganRegistrationPopupModel::organDisposition() const
 {
@@ -102,42 +90,6 @@ QVector<QStringList> OrganRegistrationPopupModel::organDisposition() const
 QVector<QVector<bool>> OrganRegistrationPopupModel::stops() const
 {
     return QVector<QVector<bool>>(m_stops.begin(), m_stops.end());
-}
-
-
-void OrganRegistrationPopupModel::setOrganName(QString organName)
-{
-    std::string stdOrganName;
-    stdOrganName = organName.toStdString();
-
-    if (stdOrganName == m_organName) {
-        return;
-    }
-
-    beginCommand();
-    setPopupOrganName(stdOrganName);
-    // toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
-    updateNotation();
-    endCommand();
-    emit organNameChanged(organName);
-}
-
-void OrganRegistrationPopupModel::setOrganDisposition(QVector<QStringList> organDisposition)
-{
-    std::array<QStringList, engraving::MANUAL_PEDAL_NO> stdOrganDisposition;
-    for (int i = 0; i < engraving::MANUAL_PEDAL_NO; i++) {
-        stdOrganDisposition[i] = organDisposition.at(i);
-    }
-
-    if (stdOrganDisposition == m_organDisposition) {
-        return;
-    }
-
-    beginCommand();
-    setPopupOrganDisposition(stdOrganDisposition);
-    updateNotation();
-    endCommand();
-    emit organDispositionChanged(organDisposition);
 }
 
 void OrganRegistrationPopupModel::setStops(QVector<QVector<bool>> stops)

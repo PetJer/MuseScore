@@ -71,7 +71,7 @@ public:
     String accessibleInfo() const override;
     String screenReaderInfo() const override;
 
-    std::string getOrganName() const;
+    QString getOrganName() const;
     std::array<QStringList, MANUAL_PEDAL_NO> getOrganDisposition() const;
     std::vector<std::pair<ManualPedal, ManualPedal>> getOrganCouplers() const { return m_organCouplers; }
     StringList getOrganPistons() const { return m_organPistons; }
@@ -84,7 +84,7 @@ public:
     QMap<ManualPedal, QVector<bool>> getStops() const { return m_stops; }
     void setStops(QMap<ManualPedal, QVector<bool>> stops);
 
-    QVector<ManualPedal> getManualPedals() const { return m_organDisposition.keys(); }
+    QStringList getManualPedals() const;
 
     String createRegistrationText();
     void updateRegistrationText();

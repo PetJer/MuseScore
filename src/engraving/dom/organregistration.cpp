@@ -109,7 +109,7 @@ static const std::array<String, MANUAL_PEDAL_NO> ManualNamingConvention(NamingCo
 static const String ManualPedalToString(ManualPedal manualPedal)
 {
     // There will be a setting as a parameter. Hardcoded for now
-    std::array<String, MANUAL_PEDAL_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::NUMBER);
+    std::array<String, MANUAL_PEDAL_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::FRENCH);
 
     switch(manualPedal) {
     case ManualPedal::PED:
@@ -205,7 +205,9 @@ String OrganRegistration::createRegistrationText()
                 _stops.append(m_organDisposition[mp.key()][i]);
             }
         }
-        stops.append(ManualPedalToString(mp.key()) + u": " + _stops.join(SEPARATOR));
+        if (!_stops.empty()) {
+            stops.append(ManualPedalToString(mp.key()) + u": " + _stops.join(SEPARATOR));
+        }
     }
 
     if (!stops.empty()) {
@@ -263,10 +265,20 @@ void OrganRegistration::setStops(QMap<ManualPedal, QVector<bool>> stops)
     m_stops = stops;
 }
 
-
-std::string OrganRegistration::getOrganName() const
+QStringList OrganRegistration::getManualPedals() const
 {
-    return m_organName.toStdString();
+    QStringList manualPedals;
+    for (auto const mp : m_organDisposition.keys()) {
+        manualPedals.append(ManualPedalToString(mp));
+    }
+
+    return manualPedals;
+}
+
+
+QString OrganRegistration::getOrganName() const
+{
+    return m_organName.toQString();
 }
 
 std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getArrayStops() const
