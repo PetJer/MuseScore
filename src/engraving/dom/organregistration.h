@@ -73,34 +73,35 @@ public:
 
     QString getOrganName() const;
     std::array<QStringList, MANUAL_PEDAL_NO> getOrganDisposition() const;
-    std::vector<std::pair<ManualPedal, ManualPedal>> getOrganCouplers() const { return m_organCouplers; }
+    QStringList getOrganCouplers() const;
     StringList getOrganPistons() const { return m_organPistons; }
 
     std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> getArrayStops() const;
-    std::vector<std::pair<ManualPedal, ManualPedal>> getCouplers() const { return m_couplers; }
+    QMap<ManualPedal, QVector<bool>> getStops() const { return m_stops; }
+    QVector<bool> getCouplers() const { return m_couplers; }
     StringList getPistons() const { return m_pistons; }
     String getContext() const { return m_context; }
 
-    QMap<ManualPedal, QVector<bool>> getStops() const { return m_stops; }
     void setStops(QMap<ManualPedal, QVector<bool>> stops);
+    void setCouplers(QVector<bool> couplers);
 
     QStringList getManualPedals() const;
 
     String createRegistrationText();
     void updateRegistrationText();
 
-    void undoChangeStops(QMap<ManualPedal, QVector<bool>> _stops);
+    void undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers);
 
 private:
     // Organ
     String m_organName;
     QMap<ManualPedal, StringList> m_organDisposition;
-    std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
+    QVector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
     StringList m_organPistons;
 
     // Registration
     QMap<ManualPedal, QVector<bool>> m_stops;
-    std::vector<std::pair<ManualPedal, ManualPedal>> m_couplers;
+    QVector<bool> m_couplers;
     StringList m_pistons;
     String m_context;
 };

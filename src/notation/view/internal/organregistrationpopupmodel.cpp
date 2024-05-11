@@ -57,9 +57,16 @@ void OrganRegistrationPopupModel::load()
     m_manualPedals = registration->getManualPedals();
     emit manualPedalsChanged(manualPedals());
 
+    m_organCouplers = registration->getOrganCouplers();
+    emit organCouplersChanged(organCouplers());
+
 
     setPopupStops(registration->getArrayStops());
     emit stopsChanged(stops());
+
+    setPopupCouplers(registration->getCouplers());
+    emit couplersChanged(couplers());
+
     return;
 }
 
@@ -76,9 +83,19 @@ QMap<mu::engraving::ManualPedal, QVector<bool>> OrganRegistrationPopupModel::get
     return mapStops;
 }
 
+QVector<bool> OrganRegistrationPopupModel::getPopupCouplers() {
+    return m_couplers;
+}
+
+
 void OrganRegistrationPopupModel::setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops)
 {
     m_stops = stops;
+}
+
+void OrganRegistrationPopupModel::setPopupCouplers(QVector<bool> couplers)
+{
+    m_couplers = couplers;
 }
 
 
@@ -105,10 +122,24 @@ void OrganRegistrationPopupModel::setStops(QVector<QVector<bool>> stops)
 
     beginCommand();
     setPopupStops(stdStops);
-    toOrganRegistration(m_item)->undoChangeStops(getPopupStops());
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers());
     updateNotation();
     endCommand();
     emit stopsChanged(stops);
+}
+
+void OrganRegistrationPopupModel::setCouplers(QVector<bool> couplers)
+{
+    if (couplers == m_couplers) {
+        return;
+    }
+
+    beginCommand();
+    setPopupCouplers(couplers);
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers());
+    updateNotation();
+    endCommand();
+    emit couplersChanged(couplers);
 }
 
 QRectF OrganRegistrationPopupModel::staffPos() const

@@ -33,9 +33,12 @@ StyledPopupView {
     property QtObject model: organRegistrationModel
 
     property string organName: organRegistrationModel.organName
-    property variant manualPedals: organRegistrationModel.manualPedals
     property variant organDisposition: organRegistrationModel.organDisposition
+    property variant manualPedals: organRegistrationModel.manualPedals
+    property variant organCouplers: organRegistrationModel.organCouplers
+
     property variant stops: organRegistrationModel.stops
+    property variant couplers: organRegistrationModel.couplers
 
     property NavigationSection notationViewNavigationSection: null
     property int navigationOrderStart: 0
@@ -82,6 +85,11 @@ StyledPopupView {
         organRegistrationModel.setStops(root.stops)
     }
 
+    function updateCouplers(index) {
+        root.couplers[index] = !root.couplers[index]
+        organRegistrationModel.setCouplers(root.couplers)
+    }
+
     function getOrganDisposition() {
         let organDispositionModel = []
         let ids = [
@@ -106,6 +114,18 @@ StyledPopupView {
         }
 
         return organDispositionModel
+    }
+
+    function getOrganCouplers() {
+        let organCouplersModel = []
+
+        for (let [index, coupler] of root.organCouplers.entries()) {
+            organCouplersModel.push(
+                {name: coupler, checked: root.couplers[index]}
+            )
+        }
+
+        return organCouplersModel
     }
 
     GridLayout {
@@ -201,6 +221,31 @@ StyledPopupView {
 
                 checked: modelData.checked
                 onClicked: updateStops(modelData.pos, modelData.col)
+            }
+        }
+
+        StyledTextLabel {
+            id: couplersLabel
+
+            Layout.row: root.organDisposition.length + 2
+            Layout.leftMargin: 10
+
+            text: "Couplers" // Translatable
+        }
+
+        Repeater {
+            model: getOrganCouplers()
+            CheckBox {
+                Layout.row: root.organDisposition.length + 2
+                Layout.column: index + 1
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                text: modelData.name
+
+                checked: modelData.checked
+                onClicked: updateCouplers(index)
             }
         }
     }

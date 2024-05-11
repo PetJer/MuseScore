@@ -41,8 +41,10 @@ class OrganRegistrationPopupModel : public AbstractElementPopupModel
     Q_PROPERTY(QString organName READ organName NOTIFY organNameChanged)
     Q_PROPERTY(QVector<QStringList> organDisposition READ organDisposition NOTIFY organDispositionChanged)
     Q_PROPERTY(QStringList manualPedals READ manualPedals NOTIFY manualPedalsChanged)
+    Q_PROPERTY(QStringList organCouplers READ organCouplers NOTIFY organCouplersChanged)
 
     Q_PROPERTY(QVector<QVector<bool>> stops READ stops WRITE setStops NOTIFY stopsChanged)
+    Q_PROPERTY(QVector<bool> couplers READ couplers WRITE setCouplers NOTIFY couplersChanged)
 
     Q_PROPERTY(QRectF staffPos READ staffPos CONSTANT)
 
@@ -54,20 +56,25 @@ public:
     QString organName() const { return m_organName; }
     QVector<QStringList> organDisposition() const;
     QStringList manualPedals() const { return m_manualPedals; }
+    QStringList organCouplers() const { return m_organCouplers; }
 
     QVector<QVector<bool>> stops() const;
+    QVector<bool> couplers() const { return m_couplers; }
 
     Q_INVOKABLE void init() override;
 
 public slots:
     void setStops(QVector<QVector<bool>> stops);
+    void setCouplers(QVector<bool> couplers);
 
 signals:
     void organNameChanged(QString organName);
     void organDispositionChanged(QVector<QStringList> organDisposition);
     void manualPedalsChanged(QStringList manualPedals);
+    void organCouplersChanged(QStringList organCouplers);
 
     void stopsChanged(QVector<QVector<bool>> stops);
+    void couplersChanged(QVector<bool> couplers);
 
 private:
     void load();
@@ -76,14 +83,18 @@ private:
     QString m_organName;
     std::array<QStringList, engraving::MANUAL_PEDAL_NO> m_organDisposition;
     QStringList m_manualPedals;
+    QStringList m_organCouplers;
 
-    // std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
     // QStringList m_organPistons;
 
     // Registration
     void setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops);
     QMap<mu::engraving::ManualPedal, QVector<bool>> getPopupStops();
     std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> m_stops;
+
+    void setPopupCouplers(QVector<bool> couplers);
+    QVector<bool> getPopupCouplers();
+    QVector<bool> m_couplers;
 
 };
 } //namespace mu::notation

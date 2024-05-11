@@ -109,7 +109,7 @@ static const std::array<String, MANUAL_PEDAL_NO> ManualNamingConvention(NamingCo
 static const String ManualPedalToString(ManualPedal manualPedal)
 {
     // There will be a setting as a parameter. Hardcoded for now
-    std::array<String, MANUAL_PEDAL_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::FRENCH);
+    std::array<String, MANUAL_PEDAL_NO> manualNamingConvention = ManualNamingConvention(NamingConvention::NUMBER);
 
     switch(manualPedal) {
     case ManualPedal::PED:
@@ -152,7 +152,7 @@ OrganRegistration::OrganRegistration(Segment* parent)
         {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Oktava 4", u"Superoktava 2"}},
         {ManualPedal::II, {u"Copula major 8", u"Copula minor 4", u"Gozdna fl. 2"}},
     };
-    m_organCouplers = std::vector<std::pair<ManualPedal, ManualPedal>> {
+    m_organCouplers = QVector<std::pair<ManualPedal, ManualPedal>> {
         {ManualPedal::II, ManualPedal::I},
         {ManualPedal::II, ManualPedal::PED},
         {ManualPedal::I, ManualPedal::PED}
@@ -168,7 +168,8 @@ OrganRegistration::OrganRegistration(Segment* parent)
         {ManualPedal::II, {true, false, true}},
     };
 
-    m_couplers = m_organCouplers;
+    m_couplers.fill(false, m_organCouplers.size());
+    m_couplers[0] = true; // testing
     m_pistons = m_organPistons;
     m_context = "Open Swell";
 
@@ -214,11 +215,13 @@ String OrganRegistration::createRegistrationText()
         registration.append(stops.join(u"\n"));
     }
 
-    for (size_t i = 0; i < m_couplers.size(); i++) {
-        couplers.append(
-            ManualPedalToString(m_couplers[i].first) + u"/"
-            + ManualPedalToString(m_couplers[i].second)
-        );
+    for (int i = 0; i < m_organCouplers.size(); i++) {
+        if (m_couplers[i]) {
+            couplers.append(
+                ManualPedalToString(m_organCouplers[i].first) + u"/"
+                + ManualPedalToString(m_organCouplers[i].second)
+            );
+        }
     }
 
     if (!couplers.empty()) {
@@ -242,7 +245,7 @@ void OrganRegistration::updateRegistrationText()
     undoChangeProperty(Pid::TEXT, createRegistrationText(), PropertyFlags::STYLED);
 }
 
-void OrganRegistration::undoChangeStops(QMap<ManualPedal, QVector<bool>> _stops)
+void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers)
 {
     const std::list<EngravingObject*> links = linkList();
     for (EngravingObject* obj : links) {
@@ -256,13 +259,35 @@ void OrganRegistration::undoChangeStops(QMap<ManualPedal, QVector<bool>> _stops)
             continue;
         }
 
-        linkedScore->undo(new ChangeOrganRegistration(item, _stops));
+        linkedScore->undo(new ChangeOrganRegistration(item, _stops, _couplers));
     }
 }
+
 
 void OrganRegistration::setStops(QMap<ManualPedal, QVector<bool>> stops)
 {
     m_stops = stops;
+}
+
+void OrganRegistration::setCouplers(QVector<bool> couplers)
+{
+    m_couplers = couplers;
+}
+
+
+QString OrganRegistration::getOrganName() const
+{
+    return m_organName.toQString();
+}
+
+std::array<QStringList, MANUAL_PEDAL_NO> OrganRegistration::getOrganDisposition() const
+{
+    std::array<QStringList, MANUAL_PEDAL_NO> disposition;
+    for (auto s = m_organDisposition.cbegin(); s != m_organDisposition.cend(); ++s) {
+        disposition[static_cast<int>(s.key())] = s.value().toQStringList();
+    }
+
+    return disposition;
 }
 
 QStringList OrganRegistration::getManualPedals() const
@@ -275,11 +300,19 @@ QStringList OrganRegistration::getManualPedals() const
     return manualPedals;
 }
 
-
-QString OrganRegistration::getOrganName() const
+QStringList OrganRegistration::getOrganCouplers() const
 {
-    return m_organName.toQString();
+    QStringList organCouplers;
+    for (auto const oc : m_organCouplers) {
+        organCouplers.append(
+            ManualPedalToString(oc.first) + u"/"
+            + ManualPedalToString(oc.second)
+        );
+    }
+
+    return organCouplers;
 }
+
 
 std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getArrayStops() const
 {
@@ -289,16 +322,6 @@ std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> OrganRegistration::getArra
     }
 
     return stops;
-}
-
-std::array<QStringList, MANUAL_PEDAL_NO> OrganRegistration::getOrganDisposition() const
-{
-    std::array<QStringList, MANUAL_PEDAL_NO> disposition;
-    for (auto s = m_organDisposition.cbegin(); s != m_organDisposition.cend(); ++s) {
-        disposition[static_cast<int>(s.key())] = s.value().toQStringList();
-    }
-
-    return disposition;
 }
 
 // Surely you can get this values from styledef... Hardcoded for now

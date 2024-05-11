@@ -1648,12 +1648,13 @@ class ChangeOrganRegistration : public UndoCommand
     OBJECT_ALLOCATOR(engraving, ChangeOrganRegistration)
     OrganRegistration* organRegistration;
     QMap<ManualPedal, QVector<bool>> stops;
+    QVector<bool> couplers;
 
     void flip(EditData*) override;
 
 public:
-    ChangeOrganRegistration(OrganRegistration* _organRegistration, QMap<ManualPedal, QVector<bool>> _stops)
-        : organRegistration(_organRegistration), stops(_stops) {}
+    ChangeOrganRegistration(OrganRegistration* _organRegistration, QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers)
+        : organRegistration(_organRegistration), stops(_stops), couplers(_couplers) {}
 
     UNDO_NAME("ChangeOrganRegistration")
     //    UNDO_CHANGED_OBJECTS({ organRegistration })

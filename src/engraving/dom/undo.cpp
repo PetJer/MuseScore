@@ -3203,13 +3203,17 @@ std::vector<const EngravingObject*> ChangeSingleHarpPedal::objectItems() const
 
 void ChangeOrganRegistration::flip(EditData*)
 {
-     QMap<ManualPedal, QVector<bool>> f_stops = organRegistration->getStops();
-    if (f_stops == stops) {
+    QMap<ManualPedal, QVector<bool>> f_stops = organRegistration->getStops();
+    QVector<bool> f_couplers = organRegistration->getCouplers();
+    if (f_stops == stops && f_couplers == couplers) {
         return;
     }
 
     organRegistration->setStops(stops);
     stops = f_stops;
+
+    organRegistration->setCouplers(couplers);
+    couplers = f_couplers;
 
     organRegistration->triggerLayout();
 }
