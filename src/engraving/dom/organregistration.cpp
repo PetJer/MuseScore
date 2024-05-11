@@ -169,8 +169,7 @@ OrganRegistration::OrganRegistration(Segment* parent)
     };
 
     m_couplers.fill(false, m_organCouplers.size());
-    m_couplers[0] = true; // testing
-    m_pistons = m_organPistons;
+    m_pistons.fill(false, m_organPistons.size());
     m_context = "Open Swell";
 
     initElementStyle(&organRegistrationStyle);
@@ -192,7 +191,7 @@ OrganRegistration::OrganRegistration(const OrganRegistration& r)
 
 String OrganRegistration::createRegistrationText()
 {
-    StringList registration, stops, couplers;
+    StringList registration, stops, couplers, pistons;
 
     // Show organ name (setting)
     if (false) {
@@ -228,8 +227,14 @@ String OrganRegistration::createRegistrationText()
         registration.append(couplers.join(SEPARATOR));
     }
 
-    if (!m_pistons.empty()) {
-        registration.append(m_pistons.join(SEPARATOR));
+    for (size_t i = 0; i < m_organPistons.size(); i++) {
+        if (m_pistons[i]) {
+            pistons.append(m_organPistons[i]);
+        }
+    }
+
+    if (!pistons.empty()) {
+        registration.append(pistons.join(SEPARATOR));
     }
 
     if (!m_context.empty()) {
@@ -245,7 +250,7 @@ void OrganRegistration::updateRegistrationText()
     undoChangeProperty(Pid::TEXT, createRegistrationText(), PropertyFlags::STYLED);
 }
 
-void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers)
+void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons)
 {
     const std::list<EngravingObject*> links = linkList();
     for (EngravingObject* obj : links) {
@@ -259,7 +264,7 @@ void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> 
             continue;
         }
 
-        linkedScore->undo(new ChangeOrganRegistration(item, _stops, _couplers));
+        linkedScore->undo(new ChangeOrganRegistration(item, _stops, _couplers, _pistons));
     }
 }
 
@@ -272,6 +277,11 @@ void OrganRegistration::setStops(QMap<ManualPedal, QVector<bool>> stops)
 void OrganRegistration::setCouplers(QVector<bool> couplers)
 {
     m_couplers = couplers;
+}
+
+void OrganRegistration::setPistons(QVector<bool> pistons)
+{
+    m_pistons = pistons;
 }
 
 
@@ -311,6 +321,11 @@ QStringList OrganRegistration::getOrganCouplers() const
     }
 
     return organCouplers;
+}
+
+QStringList OrganRegistration::getOrganPistons() const
+{
+    return m_organPistons.toQStringList();
 }
 
 

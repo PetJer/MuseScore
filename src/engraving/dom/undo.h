@@ -1649,12 +1649,15 @@ class ChangeOrganRegistration : public UndoCommand
     OrganRegistration* organRegistration;
     QMap<ManualPedal, QVector<bool>> stops;
     QVector<bool> couplers;
+    QVector<bool> pistons;
 
     void flip(EditData*) override;
 
 public:
-    ChangeOrganRegistration(OrganRegistration* _organRegistration, QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers)
-        : organRegistration(_organRegistration), stops(_stops), couplers(_couplers) {}
+    ChangeOrganRegistration(
+        OrganRegistration* _organRegistration, QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons
+    )
+        : organRegistration(_organRegistration), stops(_stops), couplers(_couplers), pistons(_pistons) {}
 
     UNDO_NAME("ChangeOrganRegistration")
     //    UNDO_CHANGED_OBJECTS({ organRegistration })

@@ -36,9 +36,11 @@ StyledPopupView {
     property variant organDisposition: organRegistrationModel.organDisposition
     property variant manualPedals: organRegistrationModel.manualPedals
     property variant organCouplers: organRegistrationModel.organCouplers
+    property variant organPistons: organRegistrationModel.organPistons
 
     property variant stops: organRegistrationModel.stops
     property variant couplers: organRegistrationModel.couplers
+    property variant pistons: organRegistrationModel.pistons
 
     property NavigationSection notationViewNavigationSection: null
     property int navigationOrderStart: 0
@@ -90,6 +92,12 @@ StyledPopupView {
         organRegistrationModel.setCouplers(root.couplers)
     }
 
+    function updatePistons(index) {
+        root.pistons[index] = !root.pistons[index]
+        organRegistrationModel.setPistons(root.pistons)
+        console.log(root.pistons)
+    }
+
     function getOrganDisposition() {
         let organDispositionModel = []
         let ids = [
@@ -126,6 +134,18 @@ StyledPopupView {
         }
 
         return organCouplersModel
+    }
+
+    function getOrganPistons() {
+        let organPistonsModel = []
+
+        for (let [index, piston] of root.organPistons.entries()) {
+            organPistonsModel.push(
+                {name: piston, checked: root.pistons[index]}
+            )
+        }
+
+        return organPistonsModel
     }
 
     GridLayout {
@@ -239,13 +259,37 @@ StyledPopupView {
                 Layout.row: root.organDisposition.length + 2
                 Layout.column: index + 1
                 Layout.topMargin: 10
-                Layout.bottomMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
                 text: modelData.name
 
                 checked: modelData.checked
                 onClicked: updateCouplers(index)
+            }
+        }
+
+        StyledTextLabel {
+            id: pistonsLabel
+
+            Layout.row: root.organDisposition.length + 3
+            Layout.leftMargin: 10
+
+            text: "Pistons" // Translatable
+        }
+
+        Repeater {
+            model: getOrganPistons()
+            CheckBox {
+                Layout.row: root.organDisposition.length + 3
+                Layout.column: index + 1
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                text: modelData.name
+
+                checked: modelData.checked
+                onClicked: updatePistons(index)
             }
         }
     }

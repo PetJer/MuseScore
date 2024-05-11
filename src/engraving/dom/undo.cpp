@@ -3205,7 +3205,8 @@ void ChangeOrganRegistration::flip(EditData*)
 {
     QMap<ManualPedal, QVector<bool>> f_stops = organRegistration->getStops();
     QVector<bool> f_couplers = organRegistration->getCouplers();
-    if (f_stops == stops && f_couplers == couplers) {
+    QVector<bool> f_pistons = organRegistration->getPistons();
+    if (f_stops == stops && f_couplers == couplers && f_pistons == pistons) {
         return;
     }
 
@@ -3214,6 +3215,9 @@ void ChangeOrganRegistration::flip(EditData*)
 
     organRegistration->setCouplers(couplers);
     couplers = f_couplers;
+
+    organRegistration->setPistons(pistons);
+    pistons = f_pistons;
 
     organRegistration->triggerLayout();
 }

@@ -73,24 +73,24 @@ public:
 
     QString getOrganName() const;
     std::array<QStringList, MANUAL_PEDAL_NO> getOrganDisposition() const;
+    QStringList getManualPedals() const;
     QStringList getOrganCouplers() const;
-    StringList getOrganPistons() const { return m_organPistons; }
+    QStringList getOrganPistons() const;
 
     std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> getArrayStops() const;
     QMap<ManualPedal, QVector<bool>> getStops() const { return m_stops; }
     QVector<bool> getCouplers() const { return m_couplers; }
-    StringList getPistons() const { return m_pistons; }
+    QVector<bool> getPistons() const { return m_pistons; }
     String getContext() const { return m_context; }
 
     void setStops(QMap<ManualPedal, QVector<bool>> stops);
     void setCouplers(QVector<bool> couplers);
-
-    QStringList getManualPedals() const;
+    void setPistons(QVector<bool> pistons);
 
     String createRegistrationText();
     void updateRegistrationText();
 
-    void undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers);
+    void undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons);
 
 private:
     // Organ
@@ -102,7 +102,7 @@ private:
     // Registration
     QMap<ManualPedal, QVector<bool>> m_stops;
     QVector<bool> m_couplers;
-    StringList m_pistons;
+    QVector<bool> m_pistons;
     String m_context;
 };
 } // namespace mu::engraving
