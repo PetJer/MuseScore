@@ -47,6 +47,7 @@ class OrganRegistrationPopupModel : public AbstractElementPopupModel
     Q_PROPERTY(QVector<QVector<bool>> stops READ stops WRITE setStops NOTIFY stopsChanged)
     Q_PROPERTY(QVector<bool> couplers READ couplers WRITE setCouplers NOTIFY couplersChanged)
     Q_PROPERTY(QVector<bool> pistons READ pistons WRITE setPistons NOTIFY pistonsChanged)
+    Q_PROPERTY(QString context READ context WRITE setContext NOTIFY contextChanged)
 
     Q_PROPERTY(QRectF staffPos READ staffPos CONSTANT)
 
@@ -64,6 +65,7 @@ public:
     QVector<QVector<bool>> stops() const;
     QVector<bool> couplers() const { return m_couplers; }
     QVector<bool> pistons() const { return m_pistons; }
+    QString context() const { return m_context; }
 
     Q_INVOKABLE void init() override;
 
@@ -71,6 +73,7 @@ public slots:
     void setStops(QVector<QVector<bool>> stops);
     void setCouplers(QVector<bool> couplers);
     void setPistons(QVector<bool> pistons);
+    void setContext(QString context);
 
 signals:
     void organNameChanged(QString organName);
@@ -82,6 +85,7 @@ signals:
     void stopsChanged(QVector<QVector<bool>> stops);
     void couplersChanged(QVector<bool> couplers);
     void pistonsChanged(QVector<bool> pistons);
+    void contextChanged(QString context);
 
 private:
     void load();
@@ -106,21 +110,10 @@ private:
     QVector<bool> getPopupPistons();
     QVector<bool> m_pistons;
 
+    void setPopupContext(QString context);
+    QString getPopupContext();
+    QString m_context;
 };
 } //namespace mu::notation
-
-/*
-// Organ
-String m_organName;
-QMap<ManualPedal, StringList> m_organDisposition;
-std::vector<std::pair<ManualPedal, ManualPedal>> m_organCouplers;
-StringList m_organPistons;
-
-// Registration
-QMap<ManualPedal, StringList> m_stops;
-std::vector<std::pair<ManualPedal, ManualPedal>> m_couplers;
-StringList m_pistons;
-String m_context;
-*/
 
 #endif // MU_NOTATION_ORGANREGISTRATIONPOPUPMODEL_H

@@ -81,16 +81,17 @@ public:
     QMap<ManualPedal, QVector<bool>> getStops() const { return m_stops; }
     QVector<bool> getCouplers() const { return m_couplers; }
     QVector<bool> getPistons() const { return m_pistons; }
-    String getContext() const { return m_context; }
+    QString getContext() const { return m_context; }
 
     void setStops(QMap<ManualPedal, QVector<bool>> stops);
     void setCouplers(QVector<bool> couplers);
     void setPistons(QVector<bool> pistons);
+    void setContext(QString context);
 
     String createRegistrationText();
     void updateRegistrationText();
 
-    void undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons);
+    void undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons, QString _context);
 
 private:
     // Organ
@@ -103,7 +104,7 @@ private:
     QMap<ManualPedal, QVector<bool>> m_stops;
     QVector<bool> m_couplers;
     QVector<bool> m_pistons;
-    String m_context;
+    QString m_context;
 };
 } // namespace mu::engraving
 

@@ -148,9 +148,11 @@ OrganRegistration::OrganRegistration(Segment* parent)
     // Manually creating our own organ as there is no creation process yet
     m_organName = "My Organ";
     m_organDisposition = QMap<ManualPedal, StringList> {
-        {ManualPedal::PED, {u"Subbas 16", u"Bordon 8"}},
-        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Oktava 4", u"Superoktava 2"}},
-        {ManualPedal::II, {u"Copula major 8", u"Copula minor 4", u"Gozdna fl. 2"}},
+        {ManualPedal::PED, {u"Principalbas 16", u"Subbas 16", u"Principal 8", u"Bordon 8", u"Fagot 16"}},
+        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Salicional 8", u"Oktava 4", u"Kopel fl. 4",
+                          u"Superoktava 2", u"Mixtura 4 vr. 1 1/3", u"Tromba dolce 8"}},
+        {ManualPedal::II, {u"Portunal 8", u"Gamba 8", u"Copula major 8", u"Copula minor 4", u"Principal 4",
+                           u"Sesquialtera 2 2/3, 1 3/5", u"Gozdna fl. 2", u"Cimbel 3 vr. 1", u"Tremulant"}},
     };
     m_organCouplers = QVector<std::pair<ManualPedal, ManualPedal>> {
         {ManualPedal::II, ManualPedal::I},
@@ -161,16 +163,13 @@ OrganRegistration::OrganRegistration(Segment* parent)
         u"Tutti", u"Forte", u"Piano"
     };
 
-    // For testing
-    m_stops = QMap<ManualPedal, QVector<bool>> {
-        {ManualPedal::PED, {false, true}},
-        {ManualPedal::I, {true, false, true, false}},
-        {ManualPedal::II, {true, false, true}},
-    };
-
+    // Registration
+    for (auto const mp : m_organDisposition.keys()) {
+        m_stops[mp].fill(false, m_organDisposition[mp].size());
+    }
     m_couplers.fill(false, m_organCouplers.size());
     m_pistons.fill(false, m_organPistons.size());
-    m_context = "Open Swell";
+    m_context = "";
 
     initElementStyle(&organRegistrationStyle);
 }
@@ -237,7 +236,7 @@ String OrganRegistration::createRegistrationText()
         registration.append(pistons.join(SEPARATOR));
     }
 
-    if (!m_context.empty()) {
+    if (!m_context.isEmpty()) {
         registration.append(m_context);
     }
 
@@ -250,7 +249,7 @@ void OrganRegistration::updateRegistrationText()
     undoChangeProperty(Pid::TEXT, createRegistrationText(), PropertyFlags::STYLED);
 }
 
-void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons)
+void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> _stops, QVector<bool> _couplers, QVector<bool> _pistons, QString _context)
 {
     const std::list<EngravingObject*> links = linkList();
     for (EngravingObject* obj : links) {
@@ -264,7 +263,7 @@ void OrganRegistration::undoChangeRegistration(QMap<ManualPedal, QVector<bool>> 
             continue;
         }
 
-        linkedScore->undo(new ChangeOrganRegistration(item, _stops, _couplers, _pistons));
+        linkedScore->undo(new ChangeOrganRegistration(item, _stops, _couplers, _pistons, _context));
     }
 }
 
@@ -282,6 +281,11 @@ void OrganRegistration::setCouplers(QVector<bool> couplers)
 void OrganRegistration::setPistons(QVector<bool> pistons)
 {
     m_pistons = pistons;
+}
+
+void OrganRegistration::setContext(QString context)
+{
+    m_context = context;
 }
 
 

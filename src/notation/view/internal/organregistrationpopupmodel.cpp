@@ -73,6 +73,9 @@ void OrganRegistrationPopupModel::load()
     setPopupPistons(registration->getPistons());
     emit pistonsChanged(pistons());
 
+    setPopupContext(registration->getContext());
+    emit contextChanged(context());
+
     return;
 }
 
@@ -97,6 +100,10 @@ QVector<bool> OrganRegistrationPopupModel::getPopupPistons() {
     return m_pistons;
 }
 
+QString OrganRegistrationPopupModel::getPopupContext() {
+    return m_context;
+}
+
 
 void OrganRegistrationPopupModel::setPopupStops(std::array<QVector<bool>, engraving::MANUAL_PEDAL_NO> stops)
 {
@@ -111,6 +118,11 @@ void OrganRegistrationPopupModel::setPopupCouplers(QVector<bool> couplers)
 void OrganRegistrationPopupModel::setPopupPistons(QVector<bool> pistons)
 {
     m_pistons = pistons;
+}
+
+void OrganRegistrationPopupModel::setPopupContext(QString context)
+{
+    m_context = context;
 }
 
 
@@ -137,7 +149,7 @@ void OrganRegistrationPopupModel::setStops(QVector<QVector<bool>> stops)
 
     beginCommand();
     setPopupStops(stdStops);
-    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons());
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons(), getPopupContext());
     updateNotation();
     endCommand();
     emit stopsChanged(stops);
@@ -151,7 +163,7 @@ void OrganRegistrationPopupModel::setCouplers(QVector<bool> couplers)
 
     beginCommand();
     setPopupCouplers(couplers);
-    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons());
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons(), getPopupContext());
     updateNotation();
     endCommand();
     emit couplersChanged(couplers);
@@ -165,10 +177,24 @@ void OrganRegistrationPopupModel::setPistons(QVector<bool> pistons)
 
     beginCommand();
     setPopupPistons(pistons);
-    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons());
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons(), getPopupContext());
     updateNotation();
     endCommand();
     emit pistonsChanged(pistons);
+}
+
+void OrganRegistrationPopupModel::setContext(QString context)
+{
+    if (context == m_context) {
+        return;
+    }
+
+    beginCommand();
+    setPopupContext(context);
+    toOrganRegistration(m_item)->undoChangeRegistration(getPopupStops(), getPopupCouplers(), getPopupPistons(), getPopupContext());
+    updateNotation();
+    endCommand();
+    emit contextChanged(context);
 }
 
 QRectF OrganRegistrationPopupModel::staffPos() const

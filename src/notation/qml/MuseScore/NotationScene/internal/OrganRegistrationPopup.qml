@@ -41,6 +41,7 @@ StyledPopupView {
     property variant stops: organRegistrationModel.stops
     property variant couplers: organRegistrationModel.couplers
     property variant pistons: organRegistrationModel.pistons
+    property string context: organRegistrationModel.context
 
     property NavigationSection notationViewNavigationSection: null
     property int navigationOrderStart: 0
@@ -95,7 +96,11 @@ StyledPopupView {
     function updatePistons(index) {
         root.pistons[index] = !root.pistons[index]
         organRegistrationModel.setPistons(root.pistons)
-        console.log(root.pistons)
+    }
+
+    function updateContext(newContext) {
+        root.context = newContext
+        organRegistrationModel.setContext(root.context)
     }
 
     function getOrganDisposition() {
@@ -113,7 +118,6 @@ StyledPopupView {
         let pos = 0
         for (let manualPedal of root.organDisposition) {
             for (let [col, stop] of manualPedal.entries()) {
-                // { name: "Copula minor 4", pos: 0, col: 1, btnGroup: iiManual }
                 organDispositionModel.push(
                     {name: stop, pos: pos, col: col, btnGroup: ids[pos], checked: root.stops[pos][col]}
                 )
@@ -150,7 +154,7 @@ StyledPopupView {
 
     GridLayout {
         id: consoleItems
-        rows: 5
+        rows: 10
         flow: GridLayout.TopToBottom
         columnSpacing: 10
         rowSpacing: 10
@@ -229,7 +233,6 @@ StyledPopupView {
 
             model: getOrganDisposition()
 
-            // Button toggle in the future
             CheckBox {
                 Layout.row: modelData.pos + 1
                 Layout.column: modelData.col + 1
@@ -249,6 +252,7 @@ StyledPopupView {
 
             Layout.row: root.organDisposition.length + 2
             Layout.leftMargin: 10
+            Layout.topMargin: 10
 
             text: "Couplers" // Translatable
         }
@@ -273,6 +277,7 @@ StyledPopupView {
 
             Layout.row: root.organDisposition.length + 3
             Layout.leftMargin: 10
+            Layout.topMargin: 10
 
             text: "Pistons" // Translatable
         }
@@ -283,13 +288,37 @@ StyledPopupView {
                 Layout.row: root.organDisposition.length + 3
                 Layout.column: index + 1
                 Layout.topMargin: 10
-                Layout.bottomMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
                 text: modelData.name
 
                 checked: modelData.checked
                 onClicked: updatePistons(index)
+            }
+        }
+
+        StyledTextLabel {
+            id: contextLabel
+
+            Layout.row: root.organDisposition.length + 4
+            Layout.leftMargin: 10
+
+            text: "Context" // Translatable
+        }
+
+        RowLayout {
+            Layout.row: root.organDisposition.length + 4
+            Layout.column: 1
+            Layout.topMargin: 10
+            Layout.bottomMargin: 10
+
+            TextInputField {
+                id: capoTextField
+
+                Layout.fillWidth: true
+
+                currentText: root.context
+                onTextChanged: updateContext(newTextValue)
             }
         }
     }
