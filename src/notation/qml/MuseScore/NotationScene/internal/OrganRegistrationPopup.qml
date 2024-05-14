@@ -152,6 +152,21 @@ StyledPopupView {
         return organPistonsModel
     }
 
+    // Can be more elegant?
+    function resetRegistration() {
+        let stops = [[]]
+
+        for (let i = 0; i < root.stops.length; i++) {
+            stops[i] = new Array(root.stops[i].length).fill(false)
+        }
+
+        organRegistrationModel.setStops(stops)
+        organRegistrationModel.setCouplers(new Array(root.couplers.length).fill(false))
+        organRegistrationModel.setPistons(new Array(root.pistons.length).fill(false))
+        organRegistrationModel.setContext("");
+        root.context = ""
+    }
+
     GridLayout {
         id: consoleItems
         rows: 10
@@ -320,6 +335,17 @@ StyledPopupView {
                 currentText: root.context
                 onTextChanged: updateContext(newTextValue)
             }
+        }
+
+        FlatButton {
+            id: resetButton
+
+            Layout.row: root.organDisposition.length + 5
+            Layout.leftMargin: 10
+            Layout.bottomMargin: 10
+
+            text: "Reset" // Translatable
+            onClicked: resetRegistration()
         }
     }
 }
