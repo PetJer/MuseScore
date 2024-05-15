@@ -47,6 +47,8 @@ StyledPopupView {
     property int navigationOrderStart: 0
     property int navigationOrderEnd: registrationNavPanel.order
 
+    property int maxColumn: 0
+
     contentWidth: consoleItems.width
     contentHeight: consoleItems.height
 
@@ -57,7 +59,7 @@ StyledPopupView {
     signal elementRectChanged(var elementRect)
 
     function updatePosition() {
-        const marginFromElement = 12
+        const marginFromElement = 5
         var popupHeight = root.contentHeight + root.padding * 2
 
         // Above registration
@@ -83,8 +85,8 @@ StyledPopupView {
         root.y = opensUp ? yUp : yDown
     }
 
-    function updateStops(pos, col) {
-        root.stops[pos][col] = !root.stops[pos][col]
+    function updateStops(row, col) {
+        root.stops[row][col] = !root.stops[row][col]
         organRegistrationModel.setStops(root.stops)
     }
 
@@ -105,24 +107,20 @@ StyledPopupView {
 
     function getOrganDisposition() {
         let organDispositionModel = []
-        let ids = [
-            viManual,
-            vManual,
-            ivManual,
-            iiiManual,
-            iiManual,
-            iManual,
-            ped
-        ]
 
-        let pos = 0
-        for (let manualPedal of root.organDisposition) {
+        for (let [row, manualPedal] of root.organDisposition.entries()) {
             for (let [col, stop] of manualPedal.entries()) {
-                organDispositionModel.push(
-                    {name: stop, pos: pos, col: col, btnGroup: ids[pos], checked: root.stops[pos][col]}
-                )
+                organDispositionModel.push({
+                    name: stop,
+                    pos: root.manualPedals.length - row,
+                    row: row,
+                    col: col,
+                    checked: root.stops[row][col]
+                })
             }
-            pos++;
+            if (manualPedal.length > root.maxColumn) {
+                root.maxColumn = manualPedal.length
+            }
         }
 
         return organDispositionModel
@@ -169,7 +167,7 @@ StyledPopupView {
 
     GridLayout {
         id: consoleItems
-        rows: 10
+        rows: root.manualPedals.length + 5
         flow: GridLayout.TopToBottom
         columnSpacing: 10
         rowSpacing: 10
@@ -198,8 +196,9 @@ StyledPopupView {
         StyledTextLabel {
             id: organName
 
-            Layout.leftMargin: 10
-            Layout.topMargin: 10
+            Layout.row: 0
+            Layout.leftMargin: 20
+            Layout.topMargin: 20
 
             font: ui.theme.bodyBoldFont
             text: root.organName
@@ -209,38 +208,10 @@ StyledPopupView {
             model: root.manualPedals
             StyledTextLabel {
                 Layout.row: index + 1
-                Layout.leftMargin: 10
+                Layout.leftMargin: 20
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 text: modelData
             }
-        }
-
-        ButtonGroup {
-            id: viManual
-        }
-
-        ButtonGroup {
-            id: vManual
-        }
-
-        ButtonGroup {
-            id: ivManual
-        }
-
-        ButtonGroup {
-            id: iiiManual
-        }
-
-        ButtonGroup {
-            id: iiManual
-        }
-
-        ButtonGroup {
-            id: iManual
-        }
-
-        ButtonGroup {
-            id: ped
         }
 
         Repeater {
@@ -248,25 +219,25 @@ StyledPopupView {
 
             model: getOrganDisposition()
 
-            CheckBox {
-                Layout.row: modelData.pos + 1
+            FlatButton {
+                Layout.row: modelData.pos
                 Layout.column: modelData.col + 1
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-                // Layout.rightMargin: (modelData.col === 8) ? 30 : 0
+                Layout.rightMargin: (modelData.col + 1 === root.maxColumn) ? 20 : 0
 
-                ButtonGroup.group: modelData.btnGroup
                 text: modelData.name
 
-                checked: modelData.checked
-                onClicked: updateStops(modelData.pos, modelData.col)
+                // Misusing the button...
+                accentButton: modelData.checked
+                onClicked: updateStops(modelData.row, modelData.col)
             }
         }
 
         StyledTextLabel {
             id: couplersLabel
 
-            Layout.row: root.organDisposition.length + 2
-            Layout.leftMargin: 10
+            Layout.row: root.manualPedals.length + 2
+            Layout.leftMargin: 20
             Layout.topMargin: 10
 
             text: "Couplers" // Translatable
@@ -274,15 +245,15 @@ StyledPopupView {
 
         Repeater {
             model: getOrganCouplers()
-            CheckBox {
-                Layout.row: root.organDisposition.length + 2
+            FlatButton {
+                Layout.row: root.manualPedals.length + 2
                 Layout.column: index + 1
                 Layout.topMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
                 text: modelData.name
 
-                checked: modelData.checked
+                accentButton: modelData.checked
                 onClicked: updateCouplers(index)
             }
         }
@@ -290,8 +261,8 @@ StyledPopupView {
         StyledTextLabel {
             id: pistonsLabel
 
-            Layout.row: root.organDisposition.length + 3
-            Layout.leftMargin: 10
+            Layout.row: couplersLabel.Layout.row + 1
+            Layout.leftMargin: 20
             Layout.topMargin: 10
 
             text: "Pistons" // Translatable
@@ -299,15 +270,15 @@ StyledPopupView {
 
         Repeater {
             model: getOrganPistons()
-            CheckBox {
-                Layout.row: root.organDisposition.length + 3
+            FlatButton {
+                Layout.row: couplersLabel.Layout.row + 1
                 Layout.column: index + 1
                 Layout.topMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
                 text: modelData.name
 
-                checked: modelData.checked
+                accentButton: modelData.checked
                 onClicked: updatePistons(index)
             }
         }
@@ -315,14 +286,14 @@ StyledPopupView {
         StyledTextLabel {
             id: contextLabel
 
-            Layout.row: root.organDisposition.length + 4
-            Layout.leftMargin: 10
+            Layout.row: pistonsLabel.Layout.row + 1
+            Layout.leftMargin: 20
 
             text: "Context" // Translatable
         }
 
         RowLayout {
-            Layout.row: root.organDisposition.length + 4
+            Layout.row: pistonsLabel.Layout.row + 1
             Layout.column: 1
             Layout.topMargin: 10
             Layout.bottomMargin: 10
@@ -340,9 +311,9 @@ StyledPopupView {
         FlatButton {
             id: resetButton
 
-            Layout.row: root.organDisposition.length + 5
-            Layout.leftMargin: 10
-            Layout.bottomMargin: 10
+            Layout.row: contextLabel.Layout.row + 1
+            Layout.leftMargin: 20
+            Layout.bottomMargin: 20
 
             text: "Reset" // Translatable
             onClicked: resetRegistration()

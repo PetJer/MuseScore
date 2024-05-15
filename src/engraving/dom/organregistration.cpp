@@ -210,6 +210,7 @@ String OrganRegistration::createRegistrationText()
     }
 
     if (!stops.empty()) {
+        std::reverse(stops.begin(), stops.end());
         registration.append(stops.join(u"\n"));
     }
 
@@ -311,6 +312,8 @@ QStringList OrganRegistration::getManualPedals() const
         manualPedals.append(ManualPedalToString(mp));
     }
 
+    // Reversing for UI reasons
+    std::reverse(manualPedals.begin(), manualPedals.end());
     return manualPedals;
 }
 
