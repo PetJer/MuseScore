@@ -152,7 +152,7 @@ OrganRegistration::OrganRegistration(Segment* parent)
         {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Salicional 8", u"Oktava 4", u"Kopel fl. 4",
                           u"Superoktava 2", u"Mixtura 4 vr. 1 1/3", u"Tromba dolce 8"}},
         {ManualPedal::II, {u"Portunal 8", u"Gamba 8", u"Copula major 8", u"Copula minor 4", u"Principal 4",
-                           u"Sesquialtera 2 2/3, 1 3/5", u"Gozdna fl. 2", u"Cimbel 3 vr. 1", u"Tremulant"}},
+                           u"Sesquialtera 2 2/3", u"Sesquialtera 2 2/3, 1 3/5", u"Gozdna fl. 2", u"Cimbel 3 vr. 1", u"Tremulant"}},
     };
     m_organCouplers = QVector<std::pair<ManualPedal, ManualPedal>> {
         {ManualPedal::II, ManualPedal::I},

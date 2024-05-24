@@ -43,9 +43,9 @@ StyledPopupView {
     property variant pistons: organRegistrationModel.pistons
     property string context: organRegistrationModel.context
 
-    property NavigationSection notationViewNavigationSection: null
-    property int navigationOrderStart: 0
-    property int navigationOrderEnd: registrationNavPanel.order
+    // property NavigationSection notationViewNavigationSection: null
+    // property int navigationOrderStart: 0
+    // property int navigationOrderEnd: registrationNavPanel.order
 
     property int maxColumn: 0
 
@@ -110,13 +110,7 @@ StyledPopupView {
 
         for (let [row, manualPedal] of root.organDisposition.entries()) {
             for (let [col, stop] of manualPedal.entries()) {
-                organDispositionModel.push({
-                    name: stop,
-                    pos: root.manualPedals.length - row,
-                    row: row,
-                    col: col,
-                    checked: root.stops[row][col]
-                })
+                organDispositionModel.push({name: stop, row: row, col: col})
             }
             if (manualPedal.length > root.maxColumn) {
                 root.maxColumn = manualPedal.length
@@ -124,30 +118,6 @@ StyledPopupView {
         }
 
         return organDispositionModel
-    }
-
-    function getOrganCouplers() {
-        let organCouplersModel = []
-
-        for (let [index, coupler] of root.organCouplers.entries()) {
-            organCouplersModel.push(
-                {name: coupler, checked: root.couplers[index]}
-            )
-        }
-
-        return organCouplersModel
-    }
-
-    function getOrganPistons() {
-        let organPistonsModel = []
-
-        for (let [index, piston] of root.organPistons.entries()) {
-            organPistonsModel.push(
-                {name: piston, checked: root.pistons[index]}
-            )
-        }
-
-        return organPistonsModel
     }
 
     // Can be more elegant?
@@ -184,14 +154,14 @@ StyledPopupView {
             organRegistrationModel.init()
         }
 
-        NavigationPanel {
-            id: registrationNavPanel
-            name: "registrationSettings"
-            direction: NavigationPanel.Vertical
-            section: root.notationViewNavigationSection
-            order: root.navigationOrderStart
-            // accessible.name: qsTrc("notation", "Stops settings buttons")
-        }
+        // NavigationPanel {
+        //     id: registrationNavPanel
+        //     name: "registrationSettings"
+        //     direction: NavigationPanel.Vertical
+        //     section: root.notationViewNavigationSection
+        //     order: root.navigationOrderStart
+        //     // accessible.name: qsTrc("notation", "Stops settings buttons")
+        // }
 
         StyledTextLabel {
             id: organName
@@ -220,7 +190,7 @@ StyledPopupView {
             model: getOrganDisposition()
 
             FlatButton {
-                Layout.row: modelData.pos
+                Layout.row: root.manualPedals.length - modelData.row
                 Layout.column: modelData.col + 1
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                 Layout.rightMargin: (modelData.col + 1 === root.maxColumn) ? 20 : 0
@@ -228,7 +198,7 @@ StyledPopupView {
                 text: modelData.name
 
                 // Misusing the button...
-                accentButton: modelData.checked
+                accentButton: root.stops[modelData.row][modelData.col]
                 onClicked: updateStops(modelData.row, modelData.col)
             }
         }
@@ -244,16 +214,16 @@ StyledPopupView {
         }
 
         Repeater {
-            model: getOrganCouplers()
+            model: root.organCouplers
             FlatButton {
                 Layout.row: root.manualPedals.length + 2
                 Layout.column: index + 1
                 Layout.topMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                text: modelData.name
+                text: modelData
 
-                accentButton: modelData.checked
+                accentButton: root.couplers[index]
                 onClicked: updateCouplers(index)
             }
         }
@@ -269,16 +239,16 @@ StyledPopupView {
         }
 
         Repeater {
-            model: getOrganPistons()
+            model: root.organPistons
             FlatButton {
                 Layout.row: couplersLabel.Layout.row + 1
                 Layout.column: index + 1
                 Layout.topMargin: 10
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
 
-                text: modelData.name
+                text: modelData
 
-                accentButton: modelData.checked
+                accentButton: root.pistons[index]
                 onClicked: updatePistons(index)
             }
         }
