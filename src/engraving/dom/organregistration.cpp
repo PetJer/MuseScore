@@ -34,17 +34,6 @@ using namespace mu;
 using namespace mu::engraving;
 
 /*
- * Settings for the future:
- * - Manual naming convention
- * - Short or long names
- * - Colon (other symbol?) after manual/pedal name
- * - items separators
- * - Show organ name / Label (invisible by default but visible if no registration is selected)
- * - show differences (will only show additions(+) and subtractions(-) of stops)
- * - Affect playback (a fun one for the future...)
- */
-
-/*
  * Because I lack the knowledge of naming conventions around the world this may be wrong. Some questions for later me:
  * - namings do change just based on the number of manuals (or the organ makers design!)?
  * - are the names below even correct (from IV to VI)?
@@ -148,12 +137,12 @@ OrganRegistration::OrganRegistration(Segment* parent)
     // Manually creating our own organ as there is no creation process yet
     m_organName = "My Organ";
     m_organDisposition = QMap<ManualPedal, StringList> {
-        {ManualPedal::PED, {u"Principalbas 16", u"Subbas 16", u"Principal 8", u"Bordon 8", u"Fagot 16"}},
-        {ManualPedal::I, {u"Principal 8", u"Bordon 8", u"Salicional 8", u"Oktava 4", u"Kopel fl. 4",
-                          u"Superoktava 2", u"Mixtura 4 vr. 1 1/3", u"Tromba dolce 8"}},
-        {ManualPedal::II, {u"Portunal 8", u"Gamba 8", u"Copula major 8", u"Copula minor 4", u"Principal 4",
-                           u"Sesquialtera 2 2/3", u"Sesquialtera 2 2/3, 1 3/5", u"Gozdna fl. 2", u"Cimbel 3 vr. 1", u"Tremulant"}},
-    };
+        {ManualPedal::PED, {u"Principalbas 16'", u"Subbas 16'", u"Principal 8'", u"Bordon 8'", u"Fagot 16'"}},
+        {ManualPedal::I, {u"Principal 8'", u"Bordon 8'", u"Salicional 8'", u"Oktava 4'", u"Kopel fl. 4'",
+                        u"Superoktava 2'", u"Mixtura 4 vr. 1 1/3'", u"Tromba dolce 8'"}},
+        {ManualPedal::II, {u"Portunal 8'", u"Gamba 8'", u"Copula major 8'", u"Copula minor 4'", u"Principal 4'",
+                        u"Sesquialtera 2 2/3'", u"Sesquialtera 2 2/3', 1 3/5'", u"Gozdna fl. 2'", u"Cimbel 3 vr. 1'", u"Tremulant"}},
+        };
     m_organCouplers = QVector<std::pair<ManualPedal, ManualPedal>> {
         {ManualPedal::II, ManualPedal::I},
         {ManualPedal::II, ManualPedal::PED},

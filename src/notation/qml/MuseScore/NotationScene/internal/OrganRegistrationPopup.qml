@@ -43,9 +43,9 @@ StyledPopupView {
     property variant pistons: organRegistrationModel.pistons
     property string context: organRegistrationModel.context
 
-    // property NavigationSection notationViewNavigationSection: null
-    // property int navigationOrderStart: 0
-    // property int navigationOrderEnd: registrationNavPanel.order
+    property NavigationSection notationViewNavigationSection: null
+    property int navigationOrderStart: 0
+    property int navigationOrderEnd: registrationNavPanel.order
 
     property int maxColumn: 0
 
@@ -82,7 +82,7 @@ StyledPopupView {
         }
 
         setOpensUpward(opensUp)
-        root.y = opensUp ? yUp : yDown
+        root.y = yDown // The calculations are wrong, so it will be like this for now
     }
 
     function updateStops(row, col) {
@@ -285,7 +285,7 @@ StyledPopupView {
             Layout.leftMargin: 20
             Layout.bottomMargin: 20
 
-            text: "Reset" // Translatable
+            text: "G. C." // Translatable
             onClicked: resetRegistration()
         }
     }
